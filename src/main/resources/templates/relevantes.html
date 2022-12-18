@@ -1,0 +1,83 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="d-flex align-items-center magin-bottom box-title-ipt-rele">
+        <div class="d-flex align-items-center" style="width: 59%;">
+            <div class="w-25">
+                <p class="title-input">
+                    DATA DO EVENTO:
+                </p>
+            </div>
+
+            <div class="w-25">
+                <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                    <input name="nome-de-teste" type="text" class="form-control box-date box-date-rele" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center box-title-ipt-rele">
+        <div class="w-15">
+            <p class="title-input">
+                DESC. OCORRÊNCIA:
+            </p>
+        </div>
+
+        <div class="w-75">
+            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                <textarea type="text" class="form-control box-ocorrencia" aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-lg" style="height: 4vw;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between w-input-deta" style="width: 80%;">
+        <div class="d-flex align-items-center justify-content-around magin-bottom" style="width: 100%; margin-top: 2vw">
+            <button type="button" class="btn btn-outline-secondary btn-width btn-search">PESQUISAR</button>
+            <button type="button" class="btn btn-outline-secondary btn-width btn-save">INSERIR</button>
+            <button type="button" class="btn btn-outline-secondary btn-width btn-clear">LIMPAR</button>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between w-input-deta box-table">
+        <table class="table table-ocorrencia">
+            <thead>
+            <tr>
+                <th scope="col">Data Evento</th>
+                <th scope="col">Descrição Ocorrência</th>
+            </tr>
+            </thead>
+            <tbody class="tbody-relevant">
+                <tr class="linha-informer-table" th:each="relevantes :${relevantes}">
+                    <input type="hidden" class="idRele" th:value="${relevantes.id}">
+                    <td th:text="${@HistoricoInforme.formatDate(listInforme.dataEvento)}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal modal-search-id-rele fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade modal-return" id="modalReturn" tabindex="-1" role="dialog" aria-labelledby="ModalReturnLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReturnLabel">Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-return-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+    <script src="/historicoabends/js/relevant.js"></script>
+</html>
+

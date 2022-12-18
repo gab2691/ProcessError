@@ -1,0 +1,8 @@
+.box-table{
+    width: 93%;
+    overflow-x: scroll;
+}
+
+.linha-informer-table{
+    cursor: pointer;
+}

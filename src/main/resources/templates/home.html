@@ -1,0 +1,437 @@
+<html>
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link href="/historicoabends/css/home.css" rel="stylesheet">
+    <link href="/historicoabends/css/transitions.css" rel="stylesheet">
+    <link href="/historicoabends/css/relevantes.css" rel="stylesheet">
+    <link href="/historicoabends/css/style.css" rel="stylesheet">
+    <link href="/historicoabends/css/jquery-ui.theme.min.css" rel="stylesheet">
+    <link href="/historicoabends/css/jquery-ui.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/historicoabends/webjars/bootstrap/4.1.3/css/bootstrap.css">
+    <link rel="shortcut icon" href="/historicoabends/imagens/logoSantander.png" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700,900&display=swap" rel="stylesheet">
+
+</head>
+<body class="d-flex">
+
+    <div class="sidebar-left d-flex flex-column">
+
+        <div class="d-flex title-navbar-left align-items-center">
+            <img class="logo-santander" src="/historicoabends/imagens/logoSantander.png">
+            <p class="title-left-sidebar">Historico de Problemas</p>
+        </div>
+
+        <div class="full-options-sidebar d-flex align-items-center pointer flex-column">
+
+            <div class="d-flex align-items-center options-sidebar">
+                <div class="d-flex align-items-center">
+                    <span class="icon-clipboard-edit icon-change-color-click"></span>
+                    <p class="title-options text-change-color-click">Process</p>
+                    <span class="icon-keyboard_arrow_right rotate-icon icon-keyboard_arrow_right_change"></span>
+                </div>
+            </div>
+
+
+            <div class="sub-options-sidebar link-menu-detalhes box-fixed-show">
+                <div class="d-flex align-items-center box-fixed">
+                    <span class="icon-circle icon-change-color-click"></span>
+                    <p class="title-sub-options text-change-color-click">Registers</p>
+                </div>
+            </div>
+
+            <div class="sub-options-sidebar menu-relevantes box-fixed-show">
+                <div class="d-flex align-items-center box-fixed">
+                    <span class="icon-circle"></span>
+                    <p class="title-sub-options">Relevant</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="main-container">
+        <form action="javascript:void(0);">
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input">
+                            DATA DO EVENTO:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input name="nome-de-teste" type="text" class="form-control box-date"
+                                   aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select position-relative">
+                    <label for="exampleFormControlSelect1" class="label-select w-25">SISTEMA:</label>
+                    <span class="icon-plus addNewSystem position-absolute"></span>
+                    <select class="select-font-size form-control select-sistema w-75" id="exampleFormControlSelect1" style="font-size: .8vw;" required>
+                        <option label="SELECIONE UM SISTEMA"></option>
+                        <option>HMR</option>
+                        <option>BOE</option>
+                        <option>AOF</option>
+                        <option>PNE</option>
+                        <option>E2-GBO</option>
+                        <option>WZ-SIGOM</option>
+                        <option>MIS-ODS</option>
+                        <option>COM-CONCILIADOR-FOBO</option>
+                        <option>SBK-SNR BK SOLUTION</option>
+                        <option>OUTROS</option>
+                        <option>RTS-REPORT SERVER</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input">
+                            JOB:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input type="text" class="form-control title-processo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input" style="margin-right: 4vw;">
+                            TICKET:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input type="text" class="form-control ipt-ticket" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select position-relative">
+                    <label for="exampleFormControlSelect18" class="label-select w-25">EQUIPE:</label>
+                    <span class="icon-plus addNewElement position-absolute"></span>
+                    <select class="form-control select-font-size select-equipe w-75" id="exampleFormControlSelect18" style="font-size: .8vw;">
+                        <option class="option-label-select" label="SELECIONE UMA EQUIPE"></option>
+                        <option>CSA</option>
+                        <option>Gap-Team</option>
+                        <option>Produban + CSA</option>
+                        <option>CSA + CDD</option>
+                        <option>Gapteam + CSA</option>
+                        <option>Gapteam + CDD</option>
+                        <option>Produban + CDD</option>
+                        <option>CSA + CDD + Prod.</option>
+                        <option>Outros</option>
+                        <option>Sustentação</option>
+                        <option>Sustentação + CDD + GT + Prod.</option>
+                        <option>Gapteam + Sustentação</option>
+                        <option>Schedulagem + Sustentação</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-between justify-content-between align-items-center box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input">
+                            INFORME ATIVO:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <input type="checkbox" id="horns" name="horns" class="check-box" checked>
+                        <label for="horns"></label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="full-box-DescProdBranch">
+                    <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt new-box-options">
+                        <div class="w-45">
+                            <p class="title-input">
+                                DESCRIÇÃO:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input name="nome-de-teste" type="text" class="form-control text-desc"
+                                       aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt" style="margin-right: 1vw;">
+                        <div class="w-45">
+                            <p class="title-input">
+                                PRODUTO:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input name="nome-de-teste" type="text" class="form-control text-prod"
+                                       aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center w-input-deta box-title-ipt">
+
+                        <div class="w-45">
+                            <p class="title-input">
+                                BRANCH:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input type="text" class="form-control text-branch" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        EVENTO/FUNCÃO:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-evento" id="exampleFormControlTextarea1 ipt-evento-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        ATUAÇÃO:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-atuacao" id="exampleFormControlTextarea2 ipt-atuacao-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        ERRO/OCORRÊNCIA:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-erro" id="exampleFormControlTextarea3 ipt-erro-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input" style="margin-right: 3.6vw;">
+                        ARQUIVO DE ATUAÇÃO
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 45.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" multiple>
+                            <label class="custom-file-label" for="inputGroupFile01"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 17.6vw;">
+                        <label for="exampleFormControlSelect12" class="label-select">TIPO DE OCORRÊNCIA:</label>
+                    </div>
+                    <select class="form-control select-font-size select-ocorrencia" id="exampleFormControlSelect12"
+                            style="font-size: .8vw;" required>
+                        <option label="SELECIONE UM TIPO DE OCORRÊNCIA"></option>
+                        <option>Batch</option>
+                        <option>Online</option>
+                        <option>Infra-Int</option>
+                        <option>Em-curso</option>
+                        <option>Infra-Ext</option>
+                        <option>Integração</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <label for="exampleFormControlSelect11" class="label-select">TIPO DE ATUAÇÃO:</label>
+                    </div>
+                    <select class="form-control select-font-size select-atuacao" id="exampleFormControlSelect11" style="font-size: .8vw;" required>
+                        <option label="SELECIONE UM TIPO DE ATUAÇÃO"></option>
+                        <option>Em curso</option>
+                        <option>Pós-Imp</option>
+                        <option>Não mapeada</option>
+                        <option>Interv. Téc</option>
+                        <option>Interv. Oper</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 17.6vw;">
+                        <label for="exampleFormControlSelect13" class="label-select">CORE PROCESSO:</label>
+                    </div>
+                    <select class="form-control select-font-size select-processo" id="exampleFormControlSelect13"
+                            style="font-size: .8vw;">
+                        <option label="SELECIONE UM CORE PROCESSO"></option>
+                        <option>Interface</option>
+                        <option>Proc-Gerencial</option>
+                        <option>COmunicação</option>
+                        <option>Proc-Contabil</option>
+                        <option>Posição Cliente</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <label for="exampleFormControlSelect14" class="label-select">AÇÕES INTERNAS:</label>
+                    </div>
+                    <select class="form-control select-font-size select-acao" id="exampleFormControlSelect14" style="font-size: .8vw;">
+                        <option label="SELECIONE UMA AÇÃO"></option>
+                        <option>Ações em curso</option>
+                        <option>Não se aplica</option>
+                        <option>Cabe análise</option>
+                        <option>Ação Realizada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 17.6vw;">
+                        <label for="exampleFormControlSelect10" class="label-select">DEST. E-MAIL:</label>
+                    </div>
+                    <select class="form-control select-font-size select-email" id="exampleFormControlSelect10"
+                            style="font-size: .8vw;" required>
+                        <option label="SELECIONE UM DEST. E-MAIL"></option>
+                        <option>Interno</option>
+                        <option>Usuário</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <p class="label-select">ANALISTA:</p>
+                    </div>
+
+                    <div class="d-flex" style="width: 20vw;">
+                        <p class="label-select">${user}</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-center justify-content-around magin-bottom magin-top">
+                <button type="button" class="btn btn-outline-secondary btn-width btn-search">PESQUISAR</button>
+                <button type="submit" class="btn btn-outline-secondary btn-width btn-save">INSERIR</button>
+                <button type="button" class="btn btn-outline-secondary btn-width btn-clear">LIMPAR</button>
+            </div>
+        </form>
+
+        <div class="box-table" style="overflow-x: scroll;">
+            <table class="table table-informe-details">
+                <thead>
+                <tr>
+                    <th scope="col">Data Evento</th>
+                    <th scope="col">Sistema</th>
+                    <th scope="col">Processo</th>
+                    <th scope="col">Anexos</th>
+                    <th scope="col">Equipe</th>
+                    <th scope="col">Ticket</th>
+                    <th scope="col">Evento/Func...</th>
+                    <th scope="col">Atuação</th>
+                    <th scope="col">MSG. ERRO</th>
+                    <th scope="col">Tipo Ocorrência</th>
+                    <th scope="col">Tipo Atuação</th>
+                    <th scope="col">Core-Processos</th>
+                    <th scope="col">Ações Internas</th>
+                    <th scope="col">Analista</th>
+                </tr>
+                </thead>
+
+
+
+            </table>
+        </div>
+
+        <div class="modal modal-search-id fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-keyboard="true">
+
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade modal-return" id="modalReturn" tabindex="-1" role="dialog" aria-labelledby="ModalReturnLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalReturnLabel">Message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-return-message"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal modal-loading" id="modalReturnCenter" tabindex="-1" role="dialog" aria-labelledby="modalReturn" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body d-flex justify-content-center">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+<script src="/historicoabends/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/historicoabends/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="/historicoabends/js/jquery-ui.min.js"></script>
+<script src="/historicoabends/js/colResizable-1.6.min.js"></script>
+<script src="/historicoabends/js/loadingView.js"></script>
+<script src="/historicoabends/js/home.js"></script>
+<script src="/historicoabends/js/menu.js"></script>
+</html>

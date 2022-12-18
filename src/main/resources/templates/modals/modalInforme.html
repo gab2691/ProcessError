@@ -1,0 +1,325 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<form action="javascript:void(0);">
+<div class="modal-dialog modal-lg" style="max-width: 1310px;">
+    <div class="modal-content">
+        <div class="main-container">
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+                    <div class="w-45">
+                        <p class="title-input">
+                            DATA DO EVENTO:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input type="text" class="form-control box-date-modalInforme"
+                                   aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" th:value="${informe.dataEvento}"
+                             required></td>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select">
+                    <label for="exampleFormControlSelect1" class="label-select w-25">SISTEMA:</label>
+                    <select class="select-font-size form-control select-sistema-modalInforme w-75" id="exampleFormControlSelect1" style="font-size: .8vw;" required>
+                        <option th:text="${informe.sistema}"></option>
+                        <option>HMR</option>
+                        <option>BOE</option>
+                        <option>AOF</option>
+                        <option>PNE</option>
+                        <option>E2-GBO</option>
+                        <option>WZ-SIGOM</option>
+                        <option>MIS-ODS</option>
+                        <option>COM-CONCILIADOR-FOBO</option>
+                        <option>SBK-SNR BK SOLUTION</option>
+                        <option>OUTROS</option>
+                        <option>RTS-REPORT SERVER</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input">
+                            JOB:
+                        </p>
+                    </div>
+
+                    <div class="w-55 box-relative">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input type="text" class="form-control title-processo-modalInforme" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" th:value="${informe.processo}">
+                        </div>
+                        <span class="icon-keyboard_arrow_right arrow-right-absolute"></span>
+                        <span class="icon-keyboard_arrow_right arrow-left-absolute"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input" style="margin-right: 4vw;">
+                            TICKET:
+                        </p>
+                    </div>
+
+                    <div class="w-55">
+                        <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                            <input type="text" class="form-control ipt-ticket-modalInforme" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" th:value="${informe.ticket}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select">
+                    <label for="exampleFormControlSelect18" class="label-select w-25">EQUIPE:</label>
+                    <select class="form-control select-font-size select-equipe-modalInforme w-75" id="exampleFormControlSelect18" style="font-size: .8vw;">
+                        <option th:text="${informe.equipes}"></option>
+                        <option>CSA</option>
+                        <option>Gap-Team</option>
+                        <option>Produban + CSA</option>
+                        <option>CSA + CDD</option>
+                        <option>Gapteam + CSA</option>
+                        <option>Gapteam + CDD</option>
+                        <option>Produban + CDD</option>
+                        <option>CSA + CDD + Prod.</option>
+                        <option>Outros</option>
+                        <option>Sustentação</option>
+                        <option>Sustentação + CDD + GT + Prod.</option>
+                        <option>Gapteam + Sustentação</option>
+                        <option>Shedulagem + Sustentação</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-between justify-content-between align-items-center box-title-ipt">
+
+                    <div class="w-45">
+                        <p class="title-input">
+                            INFORME ATIVO:
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio justify-content-between">
+                <div class="full-box-DescProdBranch">
+                    <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt new-box-options">
+                        <div class="w-45">
+                            <p class="title-input">
+                                DESCRIÇÃO:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input name="nome-de-teste" type="text" class="form-control modal-text-desc"
+                                       aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" th:value="${informe.infoJobs.descricao}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt" style="margin-right: 1vw;">
+                        <div class="w-45">
+                            <p class="title-input">
+                                PRODUTO:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input name="nome-de-teste" type="text" class="form-control modal-text-prod"
+                                       aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" required th:value="${informe.infoJobs.produto}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center w-input-deta box-title-ipt">
+
+                        <div class="w-45">
+                            <p class="title-input">
+                                BRANCH:
+                            </p>
+                        </div>
+
+                        <div class="w-55">
+                            <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                                <input type="text" class="form-control modal-text-branch" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" th:value="${informe.infoJobs.branch}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        EVENTO/FUNCÃO:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-evento-modalInforme" id="exampleFormControlTextarea1 ipt-evento-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;margin-bottom: .2vw" th:text="${informe.eventoFuncionalidade}"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        ATUAÇÃO:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-atuacao-modalInforme" id="exampleFormControlTextarea2 ipt-atuacao-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;margin-bottom: .2vw" th:text="${informe.descAtuacao}"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center" style="margin-left: 2vw;margin-bottom: .5vw;width: 86.8%;">
+                <p class="title-input" style="margin-right: 1.8vw;">
+                    ARQUIVO DE ATUAÇÃO
+                </p>
+
+                <div class="input-group input-group-lg" style="width: 45.5%;">
+                    <div class="input-group-prepend">
+
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input-modal" id="inputGroupFile02" aria-describedby="inputGroupFileAddon01" multiple>
+                        <label class="custom-file-label" for="inputGroupFile02"></label>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center" style="margin-left: 1vw;" th:if="${nomeArquivos != ''}">
+                    <p class="name-file-modal" style="margin-bottom: 0;" th:text="${nomeArquivos}"></p>
+                    <a href="/informe/downloadFiles?id=${informe.id}" download>
+                        <span class="icon-download3"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center justify-content-between" style="margin-left: 2vw;width: 86.8%;">
+                    <p class="title-input">
+                        ERRO/OCORRÊNCIA:
+                    </p>
+
+                    <div class="input-group input-group-lg" style="width: 85.5%;">
+                        <div class="input-group-prepend">
+
+                        </div>
+                        <textarea class="form-control textarea ipt-erro-modalInforme" id="exampleFormControlTextarea3 ipt-erro-modalInforme" rows="4" style="height: 6vw;padding-left: .3vw;margin-bottom: .2vw" th:text="${informe.descOcorrencia}"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom">
+                <div class="d-flex align-items-center" style="margin-left: 2vw;width: 86.8%;">
+
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 18vw;">
+                        <label for="exampleFormControlSelect12" class="label-select">TIPO DE OCORRÊNCIA:</label>
+                    </div>
+                    <select class="form-control select-font-size select-ocorrencia-modalInforme" id="exampleFormControlSelect12"
+                            style="font-size: .8vw;" required>
+                        <option th:text="${informe.strTipoOcorrencia}"></option>
+                        <option>Batch</option>
+                        <option>Online</option>
+                        <option>Infra-Int</option>
+                        <option>Em-curso</option>
+                        <option>Infra-Ext</option>
+                        <option>Integração</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <label for="exampleFormControlSelect11" class="label-select">TIPO DE ATUAÇÃO:</label>
+                    </div>
+                    <select class="form-control select-font-size select-atuacao-modalInforme" id="exampleFormControlSelect11" style="font-size: .8vw;" REQUIRED>
+                        <option th:text="${informe.strTipoAtuacao}"></option>
+                        <option>Em curso</option>
+                        <option>Pós-Imp</option>
+                        <option>Não mapeada</option>
+                        <option>Interv. Téc</option>
+                        <option>Interv. Oper</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 18vw;">
+                        <label for="exampleFormControlSelect13" class="label-select">CORE PROCESSO:</label>
+                    </div>
+                    <select class="form-control select-font-size select-processo-modalInforme" id="exampleFormControlSelect13"
+                            style="font-size: .8vw;">
+                        <option th:text="${informe.coreProcesso}"></option>
+                        <option>Interface</option>
+                        <option>Proc-Gerencial</option>
+                        <option>COmunicação</option>
+                        <option>Proc-Contabil</option>
+                        <option>Posição Cliente</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <label for="exampleFormControlSelect14" class="label-select">AÇÕES INTERNAS:</label>
+                    </div>
+                    <select class="form-control select-font-size select-acao-modalInforme" id="exampleFormControlSelect14" style="font-size: .8vw;">
+                        <option th:text="${informe.strAcaoInterna}"></option>
+                        <option>Ações em curso</option>
+                        <option>Não se aplica</option>
+                        <option>Cabe análise</option>
+                        <option>Ação Realizada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center magin-bottom box-ipt-select-radio">
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select magin-right">
+                    <div class="d-flex" style="width: 18vw;">
+                        <label for="exampleFormControlSelect10" class="label-select">DEST. E-MAIL:</label>
+                    </div>
+                    <select class="form-control select-font-size select-email-modalInforme" id="exampleFormControlSelect10"
+                            style="font-size: .8vw;" required>
+                        <option th:text="${informe.destinatario}"></option>
+                        <option>Interno</option>
+                        <option>Usuário</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center w-input-deta box-label-select">
+                    <div class="d-flex" style="width: 20vw;">
+                        <p class="label-select">ANALISTA:</p>
+                    </div>
+
+                    <div class="d-flex" style="width: 20vw;">
+                        <p class="label-select" th:text="${informe.strAnalista}"></p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-center justify-content-around magin-bottom" style="margin-top: 1vw; margin-bottom: 2vw;">
+                <input type="hidden" class="id-hidden" th:value="${informe.id}">
+                <button type="submit" class="btn btn-outline-secondary btn-width btn-update">ALTERAR</button>
+                <button type="button" class="btn btn-outline-secondary btn-width btn-copy">COPIAR</button>
+                <button type="button" class="btn btn-outline-secondary btn-width btn-delete">EXCLUIR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+<script src="/historicoabends/js/modalInforme.js"></script>
+</html>

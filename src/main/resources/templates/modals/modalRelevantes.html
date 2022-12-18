@@ -1,0 +1,166 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="modal-dialog modal-lg" style="max-width: 1148px;">
+    <div class="modal-content">
+        <div class="d-flex align-items-center magin-bottom box-title-ipt-rele">
+            <div class="d-flex align-items-center" style="width: 59%;">
+                <div class="w-25">
+                    <p class="title-input">
+                        DATA DO EVENTO:
+                    </p>
+                </div>
+
+                <div class="w-25">
+                    <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                        <input name="nome-de-teste" type="text" class="form-control box-date-modal" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" th:value="${relevantes.dataEvento}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center box-title-ipt-rele">
+            <div class="w-15">
+                <p class="title-input">
+                    DESC. OCORRÊNCIA:
+                </p>
+            </div>
+
+            <div class="w-75">
+                <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                    <textarea type="text" class="form-control box-ocorrencia-modal" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" style="height: 4vw;" th:value="${relevantes.descOcorrencia}"></textarea>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-input-deta" style="width: 80%;margin-bottom: 2vw;">
+            <div class="d-flex align-items-center justify-content-around magin-bottom" style="width: 100%; margin-top: 2vw">
+                <button type="button" class="btn btn-outline-secondary btn-width btn-change">ALTERAR</button>
+                <button type="button" class="btn btn-outline-secondary btn-width btn-copy">COPIAR</button>
+                <button type="button" class="btn btn-outline-secondary btn-width btn-delete">EXCLUIR</button>
+                <input type="hidden" class="id-relevantes" value="${relevantes.id}">
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    $('.box-date-modal').click(function () {
+        $('.ui-datepicker').css("z-index", "9999");
+    })
+
+    $(function () {
+        $('.box-date-modal').datepicker({
+            dateFormat: 'dd/mm/yy',
+            minDate: 0,
+            defaultDate: "+1w"
+        });
+    })
+
+    var atualizarGrid = function(){
+        var dataEvento = '';
+        if($('.box-date-modal').length == 0){
+            dataEvento = $('.box-date').val();
+        }
+        else{
+            dataEvento =  $('.box-date-modal').val();
+        }
+
+        var descOcorrencia = $('.box-ocorrencia').val()
+
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/relevantes/getOcorrenciaSearch",
+            contentType: "application/json",
+            data: JSON.stringify({
+                dataEvento : dataEvento,
+                descOcorrencia : descOcorrencia
+            }),
+            success: function(data,xhr,statusText) {
+                if(statusText.status == 200) {
+                    $('.table-ocorrencia').html(data);
+                }
+            },
+        })
+    }
+
+    $('.btn-copy').click(function () {
+        var dataEvento = $('.box-date-modal').val();
+        var descOcorrencia = $('.box-ocorrencia-modal').val()
+
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/relevantes/saveRelevantes",
+            contentType: "application/json",
+            data: JSON.stringify({
+                dataEvento : dataEvento,
+                descOcorrencia : descOcorrencia
+            }),
+            success: function(data,xhr, statusText) {
+                if(statusText.status == 200) {
+                    atualizarGrid()
+                    $('.modal-search-id-rele').modal('hide');
+                    $('.modal-relevantes-save-success').modal('show')
+
+                }
+                if(statusText.status == 500){
+                    $('.modal-relevantes-save-error').modal('show')
+                }
+            },
+        })
+    })
+
+    $('.btn-delete').click(function () {
+        $('.modal-search-id-rele').modal('hide');
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/relevantes/deleteRelevantes",
+            contentType: "application/json",
+            data: JSON.stringify({
+                id : $('.id-relevantes').val()
+            }),
+            success: function(data,xhr, statusText) {
+                if(statusText.status == 200) {
+                    atualizarGrid();
+                    $('.modal-relevantes-delete-success').modal('show');
+                }
+                if(statusText.status == 500){
+                    $('.modal-relevantes-delete-error').modal('show');
+                }
+            },
+        })
+    })
+
+    $('.btn-change').click(function () {
+        $('.modal-search-id-rele').modal('hide');
+
+        var dataEvento = $('.box-date-modal').val();
+        var descOcorrencia = $('.box-ocorrencia-modal').val()
+        var id =  $('.id-relevantes').val()
+
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/relevantes/updateRelevantes",
+            contentType: "application/json",
+            data: JSON.stringify({
+                id : id,
+                dataEvento : dataEvento,
+                descOcorrencia : descOcorrencia
+            }),
+            success: function(data,xhr, statusText) {
+                if(statusText.status == 200) {
+                    atualizarGrid();
+                    $('.modal-relevantes-update-success').modal('show');
+                }
+                if(statusText.status == 500){
+                    $('.modal-relevantes-update-error').modal('show');
+                }
+            },
+        })
+    })
+</script>
+
+
+

@@ -1,0 +1,364 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+    .box-title-select {
+        width: 84%;
+        margin: 1vw;
+        margin-left: 2vw;
+        }
+        @media (min-width: 576px) {
+            .modal-dialog {
+                max-width: 684px;
+                margin: 1.75rem auto;
+            }
+        }
+
+    .box-title-ipt {
+        width: 92%;
+        margin: auto;
+    }
+
+    .w-55 {
+        width: 75%;
+    }
+
+    .w-45 {
+        width: 22%;
+    }
+
+    .div-buttons-email{
+        margin: auto;
+        margin-bottom: 2vw;
+        margin-top: 2vw;
+        width: 80%;
+    }
+
+    .icon-plus:before {
+        content: "\ea0a";
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+<div class="box-full-search d-flex align-items-end justify-content-center">
+    <div class="box-search d-flex align-items-center">
+        <span class="icon-plus"></span>
+        <label for="inputSearch" class="col-sm-2 col-form-label">
+            <span class="icon-search icon-search-default icon-search-click"></span>
+        </label>
+        <div class="col-sm-10">
+            <input type="search" class="ipt-search form-control" id="inputSearch" placeholder="Email" style="padding-left: 2.3vw;">
+        </div>
+    </div>
+</div>
+
+<div class="box-table" style="overflow-x: scroll;">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Tipo Informe</th>
+            <th scope="col">Tipo de Email</th>
+            <th scope="col">Nome contato</th>
+            <th scope="col">Email de contato</th>
+            <th scope="col">Ativo</th>
+
+        </tr>
+        </thead>
+        <tbody class="table-informe">
+
+            <tr class="linha-informer-table" style="cursor: pointer;" th:each="listEmail : ${listEmail}">
+                <input class="id-email" type="hidden" value="${listEmail.id}">
+                <td class="tpInforme"><th:out value="${listEmail.tpInforme}"/></td>
+                <td th:text="${listEmail.emailLocal}"></td>
+                <td th:text="${listEmail.nomeContato}"></td>
+                <td class="emailContato" th:text="${listEmail.emailLocal}"></td>
+
+                <th:if test="${listEmail.ativo == true}">
+                    <td><input type="checkbox"  name="horns" class="check-box-email" checked></td>
+                </th:if>
+                <th:if test="${listEmail.ativo == false}">
+                    <td><input type="checkbox" name="horns" class="check-box-email"></td>
+                </th:if>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal modalEmailHistorico" tabindex="-1" role="dialog">
+
+</div>
+
+
+<div class="modal modalEmailHistoricoNovo" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select">
+            <label for="exampleFormControlSelect" class="label-select w-25">TIPO DE INFORME:</label>
+            <select class="select-font-size form-control select-tpInforme-modal w-75" id="exampleFormControlSelect" style="font-size: .8vw;">
+                <option>${emailInforme.tpInforme}</option>
+                <option>Usuario</option>
+                <option>Caderno</option>
+                <option>Interno</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center w-input-deta box-title-select">
+            <label for="exampleFormControlSelect1" class="label-select w-25">TIPO DE EMAIL:</label>
+            <select class="select-font-size form-control select-emailLocal-modal w-75" id="exampleFormControlSelect1" style="font-size: .8vw;">
+                <option>${emailInforme.emailLocal}</option>
+                <option>Cco</option>
+                <option>Para</option>
+                <option>Cc</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+
+            <div class="w-45">
+                <p class="title-input">
+                    Nome Contato:
+                </p>
+            </div>
+
+            <div class="w-55">
+                <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                    <input type="text" class="form-control ipt-nomeContato" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm" value="${emailInforme.nomeContato}">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-input-deta box-title-ipt">
+
+            <div class="w-45">
+                <p class="title-input">
+                    Email de Contato:
+                </p>
+            </div>
+
+            <div class="w-55">
+                <div class="input-group input-group-sm mb-3" style="margin-top: 1vw;">
+                    <input type="text" class="form-control ipt-emailContato" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm" value="${emailInforme.emailContato}">
+                </div>
+            </div>
+        </div>
+
+        <div class="div-buttons-email justify-content-between d-flex">
+            <input class="id-email" type="hidden" value="${emailInforme.id}">
+            <button type="button" class="btn btn-outline-secondary btn-copy-email">COPIAR</button>
+            <button type="button" class="btn btn-outline-secondary btn-save-email">SALVAR</button>
+            <button type="button" class="btn btn-outline-secondary btn-exclud-email">EXCLUIR</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<!-- Modal-Save-Success -->
+<div class="modal modal-email-save-success fade" id="modal-save-success" tabindex="-1" role="dialog" aria-labelledby="modal-save-success" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalSaveTitle">Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Email salvo com sucesso
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal-Update-Success -->
+<div class="modal modal-email-update-success fade" id="modal-update-success" tabindex="-1" role="dialog" aria-labelledby="modal-save-success" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalUpdateTitle">Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Email alterado com sucesso
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal-Delete-Success -->
+<div class="modal modal-Email-delete-success fade" id="modal-delete-success" tabindex="-1" role="dialog" aria-labelledby="modal-save-success" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalDeleteTitle">Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Email deletado com sucesso
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal-copy-Success -->
+<div class="modal modal-Email-copy-success fade" id="modal-copy-success" tabindex="-1" role="dialog" aria-labelledby="modal-save-success" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalCopyTitle">Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Email copiado com sucesso
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script>
+
+    var atualizarGrid = function(){
+        $.ajax({
+            method: "GET",
+            url: "/historicoabends/emailHistorico/atualizaGrid",
+            contentType: "application/json",
+            success: function (data, xhr, statusText) {
+                if (statusText.status == 200) {
+                    $('.table-informe').html(data);
+                }
+            },
+        })
+    }
+
+    $('.linha-informer-table').hover(function () {
+        $(this).toggleClass('change-table-row');
+    })
+
+    $('.icon-plus').click(function () {
+        $('.modalEmailHistoricoNovo').modal('show');
+    })
+    
+    var timer = null;
+    $('.ipt-search').on('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(findByInput, 1000)
+    })
+
+
+    $('.btn-save-email').click(function () {
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/emailHistorico/saveEmail",
+            contentType: "application/json",
+            data: JSON.stringify({
+                tpInforme: $('.select-tpInforme-modal option:selected').text(),
+                emailContato: $('.ipt-emailContato').val(),
+                emailLocal: $('.select-emailLocal-modal option:selected').text(),
+                nomeContato: $('.ipt-nomeContato').val()
+            }),
+            success: function (data, xhr, statusText) {
+
+                if (statusText.status == 200) {
+                    atualizarGrid();
+                    console.log('teste')
+                    $('.modalEmailHistoricoNovo').modal('hide');
+                    $('.modal-email-save-success').modal('show')
+                }
+            },
+        })
+    })
+
+    function findByInput() {
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/emailHistorico/findEmailHistorico",
+            contentType: "application/json",
+            data: JSON.stringify({
+                emailContato: $('.ipt-search').val()
+            }),
+            success: function (data, xhr, statusText) {
+                if (statusText.status == 200) {
+                    $('.table-informe').html(data);
+                }
+            },
+        })
+    }
+
+    contador = 'update';
+    $('.check-box-email').click(function () {
+        contador = 'status';
+    })
+
+    $('.linha-informer-table').click(function (){
+        var ativo = '';
+        if($(this).find('.check-box-email').is(":checked") == false) ativo = false;
+        if($(this).find('.check-box-email').is(":checked") == true) ativo = true;
+        if(contador == 'status'){
+
+            $.ajax({
+                method: "POST",
+                url: "/historicoabends/emailHistorico/updateStatus",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    id: $(this).find('.id-email').val(),
+                    ativo: ativo
+                }),
+                success: function (data, xhr, statusText) {
+                    if (statusText.status == 200) {
+                        contador = 'update'
+                        $('.modal-email-save-success').modal('show')
+                    }
+                }
+            })
+            return;
+        }
+        if(contador = 'update') {
+            $.ajax({
+                method: "POST",
+                url: "/historicoabends/emailHistorico/findById",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    id: $(this).find('.id-email').val()
+                }),
+                success: function (data, xhr, statusText) {
+                    if (statusText.status == 200) {
+                        $('.modalEmailHistorico').html(data);
+                        $('.modalEmailHistorico').modal('show');
+                    }
+                }
+            })
+        }
+
+    })
+
+    $('.check-box-email').click(function () {
+        $('.modalEmailHistorico').modal('hide');
+    })
+
+
+</script>

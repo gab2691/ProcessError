@@ -1,0 +1,74 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+    <tr class="linha-informer-table" style="cursor: pointer;" th:each="listEmailunit :${listEmail}">
+        <input class="id-email" type="hidden" th:text="${listEmailunit.id}">
+        <td class="tpInforme"><th:out value="${listEmail.tpInforme}"/></td>
+        <td th:text="${listEmailunit.emailLocal}"></td>
+        <td th:text="${listEmailunit.nomeContato}"></td>
+        <td class="emailContato" th:text="${listEmailunit.emailContato}"></td>
+        <th:if test="${listEmail.ativo == true}">
+            <td><input type="checkbox"  name="horns" class="check-box-email" checked></td>
+        </th:if>
+        <th:if test="${listEmail.ativo == false}">
+            <td><input type="checkbox" name="horns" class="check-box-email"></td>
+        </th:if>
+    </tr>
+
+<script>
+    $('.linha-informer-table').hover(function () {
+        $(this).toggleClass('change-table-row');
+    })
+
+
+    contador = 'update';
+    $('.check-box-email').click(function () {
+        contador = 'status';
+    })
+
+    $('.linha-informer-table').click(function (){
+        var ativo = '';
+        if($(this).find('.check-box-email').is(":checked") == false) ativo = false;
+        if($(this).find('.check-box-email').is(":checked") == true) ativo = true;
+        if(contador == 'status'){
+            $.ajax({
+                method: "POST",
+                url: "/historicoabends/emailHistorico/updateStatus",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    id: $(this).find('.id-email').val(),
+                    ativo: ativo
+                }),
+                success: function (data, xhr, statusText) {
+                    if (statusText.status == 200) {
+                        contador = 'update'
+                        $('.modal-email-save-success').modal('show')
+                    }
+                }
+            })
+            return;
+        }
+        if(contador = 'update') {
+            $.ajax({
+                method: "POST",
+                url: "/historicoabends/emailHistorico/findById",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    id: $(this).find('.id-email').val()
+                }),
+                success: function (data, xhr, statusText) {
+                    if (statusText.status == 200) {
+                        $('.modalEmailHistorico').html(data);
+                        $('.modalEmailHistorico').modal('show');
+                    }
+                }
+            })
+        }
+
+    })
+
+    $('.check-box-email').click(function () {
+        $('.modalEmailHistorico').modal('hide');
+    })
+
+</script>

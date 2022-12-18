@@ -1,0 +1,44 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <table class="table table-ocorrencia">
+        <thead>
+        <tr>
+            <th scope="col">Data Evento</th>
+            <th scope="col">Descrição Ocorrência</th>
+        </tr>
+        </thead>
+        <tbody class="tbody-relevant">
+        <tr class="linha-informer-table" th:each="relevantes :${relevantes}">
+            <input type="hidden" class="idRele" th:value="${relevantes.id}">
+            <td th:text="${relevantes.dataEvento}"></td>
+            <td th:text="${relevantes.descOcorrencia}"></td>
+        </tr>
+        </tbody>
+    </table>
+</html>
+<script>
+
+    $('.linha-informer-table').hover(function () {
+        $(this).toggleClass('change-table-row');
+    })
+
+    $('.linha-informer-table').click(function () {
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/relevantes/getOcorrenciaById",
+            contentType: "application/json",
+            data: JSON.stringify({
+                id : $(this).find('.idRele').val()
+            }),
+            success: function(data,xhr, statusText) {
+                if(statusText.status == 200) {
+                    $('.modal-search-id-rele').html(data)
+                    $('.modal-search-id-rele').modal('show');
+                }
+                if(statusText.status == 500){
+                    $('.modal-search-error').modal('show');
+                }
+            },
+        })
+    })
+
+</script>

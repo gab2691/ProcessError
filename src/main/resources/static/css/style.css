@@ -1,0 +1,51 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?xcx6ta');
+  src:  url('fonts/icomoon.eot?xcx6ta#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?xcx6ta') format('truetype'),
+    url('fonts/icomoon.woff?xcx6ta') format('woff'),
+    url('fonts/icomoon.svg?xcx6ta#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-search:before {
+  content: "\e904";
+}
+.icon-keyboard_arrow_right:before {
+  content: "\e901";
+}
+.icon-circle:before {
+  content: "\e902";
+}
+.icon-clipboard-edit:before {
+  content: "\e900";
+}
+.icon-zip:before {
+  content: "\e903";
+}
+.icon-download3:before {
+  content: "\e9c7";
+}
+.icon-plus:before {
+  content: "\ea0a";
+}
+.icon-cancel-circle:before {
+  content: "\ea0d";
+}

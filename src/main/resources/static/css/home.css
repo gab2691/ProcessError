@@ -1,0 +1,409 @@
+html, body{
+    width: 100%;
+    height: 100%;
+}
+
+p{
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.sidebar-left{
+    height: 100%;
+    background-color: #d9dcde!important;
+    width: 4vw;
+    overflow: hidden;
+    transition: .5s ease-in-out;
+}
+
+.title-navbar-left{
+    width: 18vw;
+    height: 5vw;
+    background-color: #343a40!important;
+}
+
+
+
+.logo-santander{
+    width: 3vw;
+}
+
+.title-left-sidebar{
+    font-size: 1vw;
+    color: white;
+    margin-bottom: 0;
+    font-family: 'Roboto', sans-serif;
+    margin-right: 2vw;
+    margin-left: 1vw;
+    transition: .5s ease-in-out;
+}
+
+.title-options {
+    font-weight: 500;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 0;
+    margin-right: 6vw;
+    font-size: 1.3vw;
+    margin-left: 1.1vw;
+    transition: .2s ease-out;
+}
+
+.title-sub-options{
+    font-weight: 500;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 0;
+    margin-right: 6vw;
+    font-size: 1.2vw;
+    margin-left: 2vw;
+    transition: .2s ease-out;
+}
+
+.icon-clipboard-edit:before {
+    content: "\e900";
+    color: #333;
+    font-size: 1.7vw;
+    margin-right: 0vw;
+    margin-left: 1vw;
+}
+
+.full-options-sidebar {
+    height: auto;
+}
+
+.options-sidebar{
+    width: 100%;
+    height: 3.3vw;
+}
+
+.sub-options-sidebar{
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    max-height: 3.3vw;
+    background-color: #cdd3d6;
+    transition: all .2s ease-in-out;
+}
+
+.box-fixed{
+    width: 60%;
+    margin-left: 1.2vw;
+    margin-top: .7vw;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.icon-keyboard_arrow_right:before {
+    content: "\e901";
+}
+
+.rotate-icon{
+    transform: rotate(0deg);
+    transition: .2s ease-out;
+}
+
+.icon-circle:before {
+    content: "\e902";
+    margin-right: 0vw;
+}
+
+
+.main-container{
+    width: 100%;
+}
+
+
+.title-input{
+    font-size: .8vw;
+    color: black;
+    margin-bottom: 0;
+    font-family: 'Roboto', sans-serif;
+    margin-right: 1vw;
+}
+
+
+.w-input-deta{
+
+}
+
+.select-font-size{
+    font-size: 1vw;
+}
+
+.label-select{
+    margin-top: .5vw;
+    margin-right: 1vw;
+    font-size: .8vw;
+}
+.box-label-select{
+    width: 34vw;
+}
+
+
+
+.btn-width{
+    width: 20%;
+}
+
+.main-container {
+    overflow-x: auto;
+}
+
+.box-table{
+    width: 97%;
+    margin: auto;
+    margin-top: 2vw;
+    margin-bottom: 3vw;
+}
+
+
+table thead tr th{
+    white-space: nowrap;
+}
+
+.table th, .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30ch;
+    font-size: 1vw;
+}
+
+.idInforme{
+    display: none;
+}
+
+.input-group > .form-control:not(:first-child), .input-group > .custom-select:not(:first-child) {
+    font-size: 1vw;
+}
+
+.links-menu{
+    text-decoration: none;
+    width: 100%;
+}
+
+.links-menu:hover{
+    text-decoration: none;
+}
+
+.box-title-ipt{
+    width: 29%;
+}
+
+.box-title-select{
+    width: 40%;
+}
+
+.w-45{
+    width: 45%;
+}
+
+.w-55{
+    width: 55%;
+}
+
+.w-25{
+    width: 25%;
+}
+
+.w-75{
+    width: 75%;
+}
+
+.w-15{
+    width: 15%;
+}
+
+.box-ipt-select-radio{
+    width: 95%;
+    margin: auto;
+}
+
+.magin-bottom{
+
+}
+
+.magin-right{
+    margin-right: 1vw;
+}
+
+.magin-top{
+    margin-top: 1vw;
+}
+
+.box-title-ipt-rele{
+    width: 90%;
+    margin: auto;
+}
+
+.icon-download3:before {
+    content: "\e9c7";
+    cursor: pointer;
+    font-size: 2vw;
+    margin-left: 1vw;
+}
+
+.name-file{
+    position: absolute;
+    z-index: 2;
+}
+
+.icon-zip:before {
+    content: "\e903";
+    font-size: 2vw;
+    color: #1b18e0;
+}
+
+.textarea{
+    height: 6vw;
+}
+
+
+.icon-search:before {
+    content: "\e904";
+    font-size: 1.5vw;
+    cursor: pointer;
+}
+
+
+.box-full-search{
+    width: 100%;
+    height: 4vw;
+}
+
+.box-search{
+
+}
+
+.icon-search-default{
+    border-radius: 0;
+    padding: 0;
+    border: 0;
+    transition: ease-out .1s;
+}
+
+
+.icon-search-hover{
+    padding: .5vw;
+    border-radius: 10px;
+    outline: 0;
+    background-color: #b5aaaa;
+    transition: ease-in .1s;
+}
+
+.icon-search-click{
+    left: 70px;
+    z-index: 3;
+    top: -3px;
+    position: absolute;
+    transition: ease-in .1s;
+}
+
+.ipt-search{
+    padding-left: 2.3vw;
+}
+
+.box-relative{
+    position: relative;
+}
+
+.arrow-right-absolute{
+    position: absolute;
+    right: -28px;
+    top: 16px;
+    font-size: 2vw;
+    cursor: pointer;
+}
+
+.arrow-left-absolute{
+    position: absolute;
+    left: -28px;
+    font-size: 2vw;
+    transform: rotatez(180deg);
+    top: 16px;
+    cursor: pointer;
+}
+
+.datepicker-modalInforme{
+    z-index: 9999;
+}
+
+.check-box-email{
+    z-index: 9999 !important;
+}
+
+
+
+.texts-display-left-menu{
+    font-size: 0;
+    margin: 0;
+    transition: .5s ease-in-out;
+    margin-left: 0vw;
+}
+
+.box-efect-left-menu{
+    justify-content: center;
+}
+
+.margin-efect-left{
+    margin-right: 0;
+}
+
+.full-heigth-left-menu{
+    width: 22vw;
+    transition: .5s ease-in-out;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-right: 2px solid #dee2e6;
+}
+
+.addNewElement{
+    right: 28vw;
+    bottom: 1vw;
+    cursor: pointer;
+}
+
+.addNewSystem{
+    right: 28vw;
+    bottom: 1vw;
+    cursor: pointer;
+}
+
+
+.new-input-option{
+    width: 100%;
+    border: 1px dashed #afa9a9;
+}
+
+
+.full-box-DescProdBranch{
+    width: 85%;
+    display: flex;
+}
+
+.new-box-options{
+    width: 34%;
+    margin-right: 1vw;
+}
+
+.loader {
+    border: 3px solid #f8f9fa;
+    border-top: 8px solid #990e0e;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,65 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Data Evento</th>
+            <th scope="col">Sistema</th>
+            <th scope="col">Processo</th>
+            <th scope="col">Equipe</th>
+            <th scope="col">Ticket</th>
+            <th scope="col">Evento/Func...</th>
+            <th scope="col">Atuação</th>
+            <th scope="col">MSG. ERRO</th>
+            <th scope="col">Tipo Ocorrência</th>
+            <th scope="col">Tipo Atuação</th>
+            <th scope="col">Core-Processos</th>
+            <th scope="col">Ações Internas</th>
+            <th scope="col">Analista</th>
+        </tr>
+    </thead>
+    <tr class="linha-informer-table" style="cursor: pointer;" th:each="listInforme :${listInforme}">
+        <td class="idInforme" th:text="${listInforme.id}"></td>
+        <td th:text="${listInforme.dataEvento}"></td>
+        <td th:text="${listInforme.sistema}"/></td>
+        <td th:text="${listInforme.processo}"/></td>
+        <td th:text="${listInforme.equipes}"></td>
+        <td th:text="${listInforme.ticket}"></td>
+        <td th:text="${listInforme.eventoFuncionalidade}"></td>
+        <td th:text="${listInforme.descAtuacao}"></td>
+        <td th:text="${listInforme.descOcorrencia}"></td>
+        <td th:text="${listInforme.strTipoOcorrencia}"></td>
+        <td th:text="${listInforme.strAcaoInterna}"></td>
+        <td th:text="${listInforme.coreProcesso}"></td>
+        <td th:text="${listInforme.strTipoAtuacao}"></td>
+        <td th:text="${listInforme.strAnalista}"></td>
+    </tr>
+</table>
+
+</html>
+<script>
+    $(".table-informe").colResizable({resizeMode:'overflow'});
+
+    $('.linha-informer-table').hover(function () {
+        $(this).toggleClass('change-table-row');
+    })
+
+    $('.linha-informer-table').click(function () {
+        var id = $(this).find('.idInforme').text();
+
+        $.ajax({
+            method: "POST",
+            url: "/historicoabends/informe/getInformeById/"+id,
+            contentType: "application/json",
+            data: JSON.stringify({
+                id : id
+            }),
+            success: function(data) {
+                $('.modal-search-id').html(data)
+                $('.modal-search-id').modal('show')
+            },
+        }).done(function(msg){
+
+        })
+    })
+</script>
