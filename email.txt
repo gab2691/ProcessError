@@ -1,0 +1,11 @@
+No inicio desse ano troquei de area dentro do banco Santander, agora faço parte do time de Engenharia de soluções, uma aréa com um escopo maior, que impacta todo o banco. Penando nisso eu criei um template de aplicação, que automatiza varias etapas do desenvolvimento como configurações para colocar a aplicação em ambiente produtivo.
+
+Após eu terminar essa primeira versão foi feito um lançamento para toda a empresa, tem evidencia disso no email que esta na pasta(Prático agil Java.msg).Eu fiz uma aprensentação por Teamns para os lideres tecnicos.
+
+Esse template foi muito bem aceito, meu chefe levou isso para os superiores da area, e o CTO da empresa gostou muito da ideia, entao eu fiz um estudo de uso desse template, que seria esse documento que está na pasta(resultados-template).
+
+Tenho prints de comversa minha com meu chefe, ele falando que o HEAD da area iria levar essa ideia adiante para o CTO. Essa iniciativa foi oq me garantiu essa nota muito acima da media, que vai de 1 a 4.
+
+Após esse estudo, esse projeto foi elevado a plataforma global do Santander, tenho prints de repositorio de código evidenciando isso, seria interessante colocar isso como evidencia na RFE, para ajudar no questionamento sobre excepcionalidade ?
+
+Quanto a nota, eu coloquei o relatório em PDF na pasta e também um documento explicando como é feito isso.
