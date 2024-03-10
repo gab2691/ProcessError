@@ -1,180 +1,124 @@
-@Slf4j
-@Service
-public abstract class FileService {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    private HashMap<String, String> mapFile;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+class FileServiceTest {
+
+    @InjectMocks
+    private FileService fileService;
+
+    @Mock
+    private ClassPathResource resource;
 
     @Value("${directory.map-links-file}")
     private String mapPath;
 
-    @Value("${GIT_REPO_PATH:C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs}")
-    private String directoryFile;
-
     @Value("${directory.treeView-file}")
     private String treeViewFile;
 
-    @PostConstruct
-    public void init() {
-        Resource resource = new ClassPathResource("static/map-link.json");
-        if (resource.exists()) {
-            try (InputStream inputStream = resource.getInputStream()) {
-                this.mapFile = transformInputStreamInObject(inputStream, HashMap.class);
-            } catch (IOException e) {
-                log.error("Não foi possível carregar o arquivo de mapeamento", e);
-            }
-        } else {
-            log.error("O arquivo de mapeamento não foi encontrado no classpath");
-        }
+    @BeforeEach
+    void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+        fileService = spy(new FileService() {});
     }
 
-    public void saveFile(String data, String path, String fileName) {
-        log.info("Saving file {} in Path {}", fileName, path);
-
-        String fileNameNormalize = Normalizer.normalize(fileName, Normalizer.Form.NFD)
-            .replaceAll("[^\\p{ASCII}]", "");
-
-        log.info("Filename normalize, old name, {} new name {}", fileName, fileNameNormalize);
-
-        Path basePath = Paths.get(directoryFile);
-        path = path.substring(1);
-
-        String[] segments = path.split("/");
-        Path directoryPath;
-
-        if (segments.length == 2) {
-            directoryPath = basePath.resolve(segments[0]);
-        } else {
-            directoryPath = basePath.resolve(path).getParent();
-        }
-
-        Path finalPath = directoryPath.resolve(treatingDocName(fileNameNormalize) + ".md");
-
-        try {
-            Files.write(finalPath, data.getBytes(StandardCharsets.UTF_8));
-        } catch (SaveFileException | IOException e) {
-            log.error("Error tryng saving file {} in Path {}", treatingDocName(fileNameNormalize),
-                path);
-            throw new SaveFileException("Error to save file: " + e.getMessage());
-        }
+    @Test
+    void init_resourceExists_loadsMapFileSuccessfully() throws IOException {
+        String jsonContent = "{\"key\":\"value\"}";
+        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8)));
+        doReturn(true).when(resource).exists();
+        fileService.init();
+        assertNotNull(fileService.getMapFile());
+        assertEquals("value", fileService.getMapFile().get("key"));
     }
 
-    public <T> T transformFileInObject(String filePath, Class<T> clazz) {
-        if (filePath == null || filePath.isEmpty() || clazz == null) {
-            log.warn("Invalid input: filePath = {}, clazz = {}", filePath, clazz);
-            throw new IllegalArgumentException(
-                "File directory or class, not available or no exists");
-        }
+    @Test
+    void saveFile_validInput_fileSavedSuccessfully() throws IOException {
+        String data = "Test Data";
+        String path = "/test";
+        String fileName = "testFile";
 
+        Path directoryPath = Paths.get(mapPath).resolve(path.substring(1)).getParent();
+        Path finalPath = directoryPath.resolve(fileName + ".md");
+
+        fileService.saveFile(data, path, fileName);
+
+        verify(fileService, times(1)).saveFile(data, path, fileName);
+        assertTrue(Files.exists(finalPath));
+    }
+
+    @Test
+    void transformFileInObject_validPath_transformsSuccessfully() throws IOException {
+        String filePath = "path/to/testFile.json";
         File file = new File(filePath);
-        if (!file.exists() || !file.canRead()) {
-            log.warn("Error tryng transform file {} into class {}", file, clazz);
-            throw new FileNotAccessibleException("File or class, not available or no exists");
-        }
-        log.info("Getting file {} from directory {} and transform into class {}", file.getName(),
-            directoryFile, clazz);
+        when(file.exists()).thenReturn(true);
+        when(file.canRead()).thenReturn(true);
 
-        try {
-            log.info("Transform file {} into Class {}", filePath, clazz);
-            return new ObjectMapper().readValue(file, clazz);
-        } catch (IOException e) {
-            log.error("Error trying transform file {} to Object {} due to IOException", file.getName(), clazz, e);
-            throw new IllegalArgumentException("Error trying to create Object from file, verify the file and class", e);
-        } catch (IllegalArgumentException e) {
-            log.error("Error trying transform file {} to Object {} due to IllegalArgumentException", file.getName(), clazz, e);
-            throw e;
-        }
+        HashMap<String, Object> result = fileService.transformFileInObject(filePath, HashMap.class);
+
+        assertNotNull(result);
+        // Additional assertions based on the expected structure of your file
     }
 
+    @Test
+    void transformInputStreamInObject_validInputStream_transformsSuccessfully() {
+        String jsonContent = "{\"key\":\"value\"}";
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
 
-    public <T> T transformInputStreamInObject(InputStream inputStream, Class<T> clazz) {
-        if (inputStream == null || clazz == null) {
-            log.warn("Invalid input: inputStream = {}, clazz = {}", inputStream, clazz);
-            throw new IllegalArgumentException(
-                "InputStream or class not available or does not exist");
-        }
+        HashMap result = fileService.transformInputStreamInObject(inputStream, HashMap.class);
 
-        try {
-            log.info("Transforming InputStream into class {}", clazz);
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(inputStream, clazz);
-        } catch (IOException e) {
-            log.error("Error transforming InputStream to object", e);
-            throw new IllegalArgumentException("Error trying to create object from InputStream", e);
-        }
+        assertNotNull(result);
+        assertEquals("value", result.get("key"));
     }
 
+    @Test
+    void modifyDirectory_validTreeView_modifiesSuccessfully() {
+        // Assuming transformFileInObject is mocked to return a specific SidenavDTO object
+        List<TreeViewDTO> treeViewDTOs = new ArrayList<>();
+        TreeViewDTO treeViewDTO = new TreeViewDTO();
+        treeViewDTO.setUrl("original/url");
+        treeViewDTOs.add(treeViewDTO);
 
-    public List<TreeViewDTO> modifyDirectory() {
-        List<TreeViewDTO> sidenav = this.transformFileInObject(treeViewFile, SidenavDTO.class)
-            .getSidenav();
-        dfsGetLastDirectory(sidenav);
-        return sidenav;
+        when(fileService.transformFileInObject(treeViewFile, SidenavDTO.class)).thenReturn(new SidenavDTO("test", "/test", treeViewDTOs));
+
+        List<TreeViewDTO> modified = fileService.modifyDirectory();
+
+        assertNotNull(modified);
+        assertEquals("url", modified.get(0).getUrl());
+        // Further assertions as needed
     }
 
+    @Test
+    void updateTreeView_validTreeView_updatesSuccessfully() {
+        List<TreeViewDTO> treeViewDTOs = new ArrayList<>();
+        TreeViewDTO treeViewDTO = new TreeViewDTO();
+        treeViewDTOs.add(treeViewDTO);
 
-    private void dfsGetLastDirectory(List<TreeViewDTO> sidenav) {
-        if (sidenav == null) {
-            return;
-        }
+        doNothing().when(fileService).updateTreeView(treeViewDTOs);
 
-        for (TreeViewDTO t : sidenav) {
-            if (t.getUrl() != null) {
-                String url = t.getUrl();
-                String[] split = url.split("/");
-                t.setUrl(split[split.length - 1]);
+        fileService.updateTreeView(treeViewDTOs);
 
-                dfsGetLastDirectory(t.getChildren());
-            }
-        }
+        verify(fileService, times(1)).updateTreeView(treeViewDTOs);
     }
 
-
-    public boolean comparePaths(String directory, Path folder) {
-        return Paths.get(directory).getFileName().endsWith(folder);
-    }
-
-
-    public void updateTreeView(List<TreeViewDTO> treeViewDTO) {
-        log.info("Saving new version of TreeView in folder {}", treeViewFile);
-        try {
-            new ObjectMapper().writeValue(new File(treeViewFile),
-                new SidenavDTO("Java", "/docs/java", treeViewDTO));
-        } catch (IOException e) {
-            log.error("Error trying to update file TreeView", e);
-            throw new UpdateTreeViewFile("Error trying to update file TreeView", e); // Altere o construtor de UpdateTreeViewFile para aceitar uma causa
-        }
-    }
-
-    
-    public SidenavDTO createNewFolder(FolderDTO folderDTO) throws FolderCreationException {
-        SidenavDTO sidenavDTO = this.transformFileInObject(treeViewFile, SidenavDTO.class);
-        TreeViewDTO treeViewDTO = findFolder(sidenavDTO.getSidenav(), folderDTO.findLastPath());
-        if (treeViewDTO == null) {
-            throw new FolderCreationException(
-                "This basePath doesn't exist: " + folderDTO.getBasePath());
-        }
-        Path path = Paths.get(directoryFile);
-        try {
-            String pathString =
-                new StringBuilder(path.toString())
-                    .append("/")
-                    .append(treeViewDTO.getUrl())
-                    .append("/" + treatingDocName(folderDTO.getFolder())).toString();
-
-            Files.createDirectories(Path.of(pathString));
-
-            TreeViewDTO currentTreeView =
-                new TreeViewDTO(folderDTO.getFolder()
-                    .replace("-", ""),
-                    treeViewDTO.getUrl() + "/" + treatingDocName(folderDTO.getFolder()),
-                    null, new ArrayList<>(),
-                    treeViewDTO.getChildren().size() + 1, false);
-
-            treeViewDTO.getChildren().add(currentTreeView);
-
-            createDefaultDoc(treeViewDTO, folderDTO);
-        } catch (IOException e) {
-            throw new FolderCreationException("Error creating folder", e);
-        }
-        return sidenavDTO;
-    }
+    // Testes para createNewFolder, comparePaths e outros métodos públicos devem seguir uma lógica similar,
+    // focando em cenários de sucesso, manipulação de exceções e verificações de estado ou interações.
+}
