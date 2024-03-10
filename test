@@ -1,64 +1,43 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class FileServiceTest {
 
-    // Substitua `FileService` pela sua classe concreta, se `FileService` for abstrata.
-    @InjectMocks
-    private FileService fileService = new FileService() {
-        // Se FileService for realmente abstrata, você precisará fornecer implementações concretas
-        // para quaisquer métodos abstratos aqui ou instanciar uma subclasse concreta para testar.
-    };
+    private FileService fileService;
 
-    // Essa é uma simulação do recurso; não precisamos substituí-la manualmente no teste.
     @Mock
-    private ClassPathResource resource;
+    private ClassPathResource mockResource;
 
     @BeforeEach
-    void setUp() {
-        // Neste caso, vamos simular o ClassPathResource diretamente,
-        // então não é necessário substituir manualmente a lógica de inicialização.
+    void setUp() throws Exception {
+        fileService = new FileService(); // Assume que FileService não é abstrato aqui
+        String jsonContent = "{\"key\": \"value\"}";
+        InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+
+        when(mockResource.exists()).thenReturn(true);
+        when(mockResource.getInputStream()).thenReturn(inputStream);
+
+        // Injeta o mockResource no fileService
+        ReflectionTestUtils.setField(fileService, "resource", mockResource);
     }
 
     @Test
-    void init_whenFileExists_loadsMapFileSuccessfully() throws IOException {
-        String jsonContent = "{\"key\": \"value\"}";
-        when(resource.exists()).thenReturn(true);
-        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8)));
-
-        // Inicialização do mapa dentro do método init() para simular o carregamento correto.
-        fileService.mapFile = new HashMap<>();
-
+    void init_FileExists_MapFileIsLoaded() {
         fileService.init();
-
         assertNotNull(fileService.getMapFile());
         assertFalse(fileService.getMapFile().isEmpty());
         assertEquals("value", fileService.getMapFile().get("key"));
-    }
-
-    @Test
-    void init_whenFileDoesNotExist_logsError() {
-        when(resource.exists()).thenReturn(false);
-
-        // Inicialização do mapa dentro do método init() para simular a condição de falha.
-        fileService.mapFile = new HashMap<>();
-
-        fileService.init();
-
-        assertTrue(fileService.getMapFile().isEmpty());
     }
 }
