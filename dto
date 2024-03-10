@@ -1,33 +1,28 @@
-@JsonPropertyOrder({"title", "url", "urlConfluence", "children", "indexPage", "order"})
-@JsonInclude(Include.NON_NULL)
-public class TreeViewDTO {
+@ExtendWith(MockitoExtension.class)
+class FileServiceTest {
 
-    private String title;
-    private String url;
-    private String urlConfluence;
-    private boolean isIndexPage;
-    private List<TreeViewDTO> children;
-    private int order;
+    @InjectMocks
+    private FileService fileService;
 
-    public TreeViewDTO(String title, String url, String urlConfluence, List<TreeViewDTO> children, int order, boolean isIndexPage) {
-        this.title = title;
-        this.url = url;
-        this.urlConfluence = urlConfluence;
-        this.isIndexPage = isIndexPage;
-        this.children = children != null ? children : new ArrayList<>();
-        this.order = order;
-    }
+    @Mock
+    private ClassPathResource mockResource;
 
+    @Mock
+    private SidenavDTO sidenavDTO;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SidenavDTO {
+    @BeforeEach
+    void setUp() throws IOException {
+        // Configuração leniente para evitar o aviso de "unnecessary stubbings"
+        String jsonContent = "{\"key\": \"value\"}";
+        InputStream inputStream = new ByteArrayInputStream(
+            jsonContent.getBytes(StandardCharsets.UTF_8));
 
-    private String title;
-    private String url;
-    private List<TreeViewDTO> sidenav;
+        lenient().when(mockResource.exists()).thenReturn(true);
+        lenient().when(mockResource.getInputStream()).thenReturn(inputStream);
 
-    public SidenavDTO(String title, String url, List<TreeViewDTO> sidenav) {
-        this.title = title;
-        this.url = url;
-        this.sidenav = sidenav;
+        // Define os valores necessários para as propriedades anotadas com @Value na classe FileService
+        ReflectionTestUtils.setField(fileService, "directoryFile",
+            "C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs");
+        ReflectionTestUtils.setField(fileService, "mapPath", "/path/to/map-links-file");
+        ReflectionTestUtils.setField(fileService, "treeViewFile", "/path/to/treeView-file");
     }
