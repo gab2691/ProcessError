@@ -17,46 +17,48 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class FileServiceTest {
 
+    // Substitua `FileService` pela sua classe concreta, se `FileService` for abstrata.
     @InjectMocks
-    private FileService fileService;
+    private FileService fileService = new FileService() {
+        // Se FileService for realmente abstrata, você precisará fornecer implementações concretas
+        // para quaisquer métodos abstratos aqui ou instanciar uma subclasse concreta para testar.
+    };
 
+    // Essa é uma simulação do recurso; não precisamos substituí-la manualmente no teste.
     @Mock
     private ClassPathResource resource;
 
     @BeforeEach
     void setUp() {
-        // Assume que FileService é uma classe concreta para fins de teste.
-        fileService = new FileService() {
-            // Implemente métodos abstratos se houver.
-        };
+        // Neste caso, vamos simular o ClassPathResource diretamente,
+        // então não é necessário substituir manualmente a lógica de inicialização.
     }
 
     @Test
     void init_whenFileExists_loadsMapFileSuccessfully() throws IOException {
-        // Simulação para o recurso existir e para ler um JSON simples.
         String jsonContent = "{\"key\": \"value\"}";
-        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8)));
         when(resource.exists()).thenReturn(true);
+        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8)));
 
-        // Execute o método init.
+        // Inicialização do mapa dentro do método init() para simular o carregamento correto.
+        fileService.mapFile = new HashMap<>();
+
         fileService.init();
 
-        // Verifica se o mapFile foi carregado corretamente.
         assertNotNull(fileService.getMapFile());
+        assertFalse(fileService.getMapFile().isEmpty());
         assertEquals("value", fileService.getMapFile().get("key"));
     }
 
     @Test
     void init_whenFileDoesNotExist_logsError() {
-        // Simulação para o recurso não existir.
         when(resource.exists()).thenReturn(false);
 
-        // Execute o método init.
+        // Inicialização do mapa dentro do método init() para simular a condição de falha.
+        fileService.mapFile = new HashMap<>();
+
         fileService.init();
 
-        // Verifica se o mapFile não foi carregado.
         assertTrue(fileService.getMapFile().isEmpty());
-        // Aqui, você também pode querer verificar se uma mensagem de erro específica foi logada.
-        // Isso pode ser mais desafiador, pois envolve a verificação de logs específicos.
     }
 }
