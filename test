@@ -1,126 +1,180 @@
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
-
+@Slf4j
 @Service
-public class JGitService {
+public abstract class FileService {
 
-    @Value("${gitLab.remote-repo}")
-    private String remoteRepo;
+    private HashMap<String, String> mapFile;
 
-    @Value("${GIT_REPO_PATH}")
-    private String localRepo;
-    
-    private String user = "t734536";
-    private String pass = "Gbb0921@";
-    
-    private final Logger logger = LoggerFactory.getLogger(JGitService.class);
+    @Value("${directory.map-links-file}")
+    private String mapPath;
 
-    // Dependências que serão mockadas nos testes
-    private GitFactory gitFactory;
+    @Value("${GIT_REPO_PATH:C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs}")
+    private String directoryFile;
 
-    public JGitService(GitFactory gitFactory) {
-        this.gitFactory = gitFactory;
-    }
-
-    public void injectRepo(String repo) {
-        this.localRepo = repo;
-    }
+    @Value("${directory.treeView-file}")
+    private String treeViewFile;
 
     @PostConstruct
-    public void postConstruct() {
-        initRepo();
-    }
-
-    public void initRepo() {
-        File repo = new File(localRepo);
-        if (!repo.exists() || !new File(localRepo, ".git").exists()) {
-            try {
-                UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(user, pass);
-                logger.info("Cloning repository to: {}", localRepo);
-                gitFactory.cloneRepository()
-                           .setURI(remoteRepo)
-                           .setCredentialsProvider(credentialsProvider)
-                           .setDirectory(repo)
-                           .call();
-                logger.info("Repository cloned successfully");
-            } catch (GitAPIException e) {
-                logger.error("Could not clone repository. Exception: {}", e.getMessage(), e);
-                throw new LocalRepoException("Repository initialization failed", e);
+    public void init() {
+        Resource resource = new ClassPathResource("static/map-link.json");
+        if (resource.exists()) {
+            try (InputStream inputStream = resource.getInputStream()) {
+                this.mapFile = transformInputStreamInObject(inputStream, HashMap.class);
+            } catch (IOException e) {
+                log.error("Não foi possível carregar o arquivo de mapeamento", e);
             }
         } else {
-            logger.info("Repository already exists: {}", localRepo);
+            log.error("O arquivo de mapeamento não foi encontrado no classpath");
         }
     }
 
-    // Os outros métodos permanecem inalterados
-}
-public interface GitFactory {
-    Git cloneRepository() throws GitAPIException;
-    Git open(File repoDirectory) throws IOException;
-}
+    public void saveFile(String data, String path, String fileName) {
+        log.info("Saving file {} in Path {}", fileName, path);
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.Mockito;
+        String fileNameNormalize = Normalizer.normalize(fileName, Normalizer.Form.NFD)
+            .replaceAll("[^\\p{ASCII}]", "");
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+        log.info("Filename normalize, old name, {} new name {}", fileName, fileNameNormalize);
 
-import org.eclipse.jgit.api.Git;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.Mockito.*;
+        Path basePath = Paths.get(directoryFile);
+        path = path.substring(1);
 
-@ExtendWith(MockitoExtension.class)
-public class JGitServiceTest {
+        String[] segments = path.split("/");
+        Path directoryPath;
 
-    @Mock
-    private GitFactory gitFactory;
+        if (segments.length == 2) {
+            directoryPath = basePath.resolve(segments[0]);
+        } else {
+            directoryPath = basePath.resolve(path).getParent();
+        }
 
-    @InjectMocks
-    private JGitService jGitService;
+        Path finalPath = directoryPath.resolve(treatingDocName(fileNameNormalize) + ".md");
 
-    @Mock
-    private Git git;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        when(gitFactory.open(any(File.class))).thenReturn(git);
+        try {
+            Files.write(finalPath, data.getBytes(StandardCharsets.UTF_8));
+        } catch (SaveFileException | IOException e) {
+            log.error("Error tryng saving file {} in Path {}", treatingDocName(fileNameNormalize),
+                path);
+            throw new SaveFileException("Error to save file: " + e.getMessage());
+        }
     }
 
-    @Test
-    void testUpdateLocalRepo() throws Exception {
-        // Mocking detailed behaviors of Git commands...
-        jGitService.updateLocalRepo();
-        // Assertions and verifications...
+    public <T> T transformFileInObject(String filePath, Class<T> clazz) {
+        if (filePath == null || filePath.isEmpty() || clazz == null) {
+            log.warn("Invalid input: filePath = {}, clazz = {}", filePath, clazz);
+            throw new IllegalArgumentException(
+                "File directory or class, not available or no exists");
+        }
+
+        File file = new File(filePath);
+        if (!file.exists() || !file.canRead()) {
+            log.warn("Error tryng transform file {} into class {}", file, clazz);
+            throw new FileNotAccessibleException("File or class, not available or no exists");
+        }
+        log.info("Getting file {} from directory {} and transform into class {}", file.getName(),
+            directoryFile, clazz);
+
+        try {
+            log.info("Transform file {} into Class {}", filePath, clazz);
+            return new ObjectMapper().readValue(file, clazz);
+        } catch (IOException e) {
+            log.error("Error trying transform file {} to Object {} due to IOException", file.getName(), clazz, e);
+            throw new IllegalArgumentException("Error trying to create Object from file, verify the file and class", e);
+        } catch (IllegalArgumentException e) {
+            log.error("Error trying transform file {} to Object {} due to IllegalArgumentException", file.getName(), clazz, e);
+            throw e;
+        }
     }
 
-    @Test
-    void testPushDocs() throws Exception {
-        // Mocking detailed behaviors of Git commands...
-        jGitService.pushDocs();
-        // Assertions and verifications...
-    }
-}
 
+    public <T> T transformInputStreamInObject(InputStream inputStream, Class<T> clazz) {
+        if (inputStream == null || clazz == null) {
+            log.warn("Invalid input: inputStream = {}, clazz = {}", inputStream, clazz);
+            throw new IllegalArgumentException(
+                "InputStream or class not available or does not exist");
+        }
+
+        try {
+            log.info("Transforming InputStream into class {}", clazz);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(inputStream, clazz);
+        } catch (IOException e) {
+            log.error("Error transforming InputStream to object", e);
+            throw new IllegalArgumentException("Error trying to create object from InputStream", e);
+        }
+    }
+
+
+    public List<TreeViewDTO> modifyDirectory() {
+        List<TreeViewDTO> sidenav = this.transformFileInObject(treeViewFile, SidenavDTO.class)
+            .getSidenav();
+        dfsGetLastDirectory(sidenav);
+        return sidenav;
+    }
+
+
+    private void dfsGetLastDirectory(List<TreeViewDTO> sidenav) {
+        if (sidenav == null) {
+            return;
+        }
+
+        for (TreeViewDTO t : sidenav) {
+            if (t.getUrl() != null) {
+                String url = t.getUrl();
+                String[] split = url.split("/");
+                t.setUrl(split[split.length - 1]);
+
+                dfsGetLastDirectory(t.getChildren());
+            }
+        }
+    }
+
+
+    public boolean comparePaths(String directory, Path folder) {
+        return Paths.get(directory).getFileName().endsWith(folder);
+    }
+
+
+    public void updateTreeView(List<TreeViewDTO> treeViewDTO) {
+        log.info("Saving new version of TreeView in folder {}", treeViewFile);
+        try {
+            new ObjectMapper().writeValue(new File(treeViewFile),
+                new SidenavDTO("Java", "/docs/java", treeViewDTO));
+        } catch (IOException e) {
+            log.error("Error trying to update file TreeView", e);
+            throw new UpdateTreeViewFile("Error trying to update file TreeView", e); // Altere o construtor de UpdateTreeViewFile para aceitar uma causa
+        }
+    }
+
+    
+    public SidenavDTO createNewFolder(FolderDTO folderDTO) throws FolderCreationException {
+        SidenavDTO sidenavDTO = this.transformFileInObject(treeViewFile, SidenavDTO.class);
+        TreeViewDTO treeViewDTO = findFolder(sidenavDTO.getSidenav(), folderDTO.findLastPath());
+        if (treeViewDTO == null) {
+            throw new FolderCreationException(
+                "This basePath doesn't exist: " + folderDTO.getBasePath());
+        }
+        Path path = Paths.get(directoryFile);
+        try {
+            String pathString =
+                new StringBuilder(path.toString())
+                    .append("/")
+                    .append(treeViewDTO.getUrl())
+                    .append("/" + treatingDocName(folderDTO.getFolder())).toString();
+
+            Files.createDirectories(Path.of(pathString));
+
+            TreeViewDTO currentTreeView =
+                new TreeViewDTO(folderDTO.getFolder()
+                    .replace("-", ""),
+                    treeViewDTO.getUrl() + "/" + treatingDocName(folderDTO.getFolder()),
+                    null, new ArrayList<>(),
+                    treeViewDTO.getChildren().size() + 1, false);
+
+            treeViewDTO.getChildren().add(currentTreeView);
+
+            createDefaultDoc(treeViewDTO, folderDTO);
+        } catch (IOException e) {
+            throw new FolderCreationException("Error creating folder", e);
+        }
+        return sidenavDTO;
+    }
