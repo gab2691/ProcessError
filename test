@@ -152,4 +152,28 @@ class FileServiceTest {
             assertFalse(dto.getUrl().contains("/"), "URL modificada não deve conter '/': " + dto.getUrl());
         }
     }
+
+    @Test
+    void modifyDirectory_ModifiesUrlsCorrectly() {
+        // Preparando dados simulados
+        List<TreeViewDTO> childrenList = new ArrayList<>();
+        childrenList.add(new TreeViewDTO("Child Title", "parent/child", null, new ArrayList<>(), 1, false));
+        List<TreeViewDTO> initialTreeView = new ArrayList<>();
+        initialTreeView.add(new TreeViewDTO("Parent Title", "parent", null, childrenList, 0, true));
+        SidenavDTO mockSidenavDTO = new SidenavDTO("Main Title", "/main", initialTreeView);
+
+        // Configuração do mock para transformFileInObject
+        fileService = spy(fileService);
+        doReturn(mockSidenavDTO).when(fileService).transformFileInObject(anyString(), eq(SidenavDTO.class));
+
+        // Execução
+        List<TreeViewDTO> modified = fileService.modifyDirectory();
+
+        // Verificações
+        assertNotNull(modified);
+        assertFalse(modified.isEmpty());
+
+        assertEquals("parent", modified.get(0).getUrl(), "A URL do pai deve ser modificada para o último segmento");
+        assertEquals("child", modified.get(0).getChildren().get(0).getUrl(), "A URL da criança deve ser modificada para o último segmento");
+    }
 }
