@@ -217,4 +217,39 @@ class FileServiceTest {
 
         // Opcionalmente, você pode ler o arquivo e verificar se o conteúdo corresponde ao esperado
     }
+
+@Test
+    void createNewFolder_SuccessfullyCreatesFolder() throws Exception {
+        // Setup inicial
+        SidenavDTO mockSidenavDTO = mock(SidenavDTO.class); // Assumindo que isso é retornado por transformFileInObject
+        TreeViewDTO mockTreeViewDTO = mock(TreeViewDTO.class); // Assumindo que isso é encontrado por findFolder
+        
+        // Configuração de Mocks
+        fileService = spy(fileService);
+        doReturn(mockSidenavDTO).when(fileService).transformFileInObject(anyString(), eq(SidenavDTO.class));
+        doReturn(mockTreeViewDTO).when(fileService).findFolder(anyList(), anyString());
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.createDirectories(any(Path.class))).thenReturn(null);
+            
+            // Ação
+            SidenavDTO result = fileService.createNewFolder(new FolderDTO("NewFolder", "/basePath"));
+            
+            // Verificações
+            assertNotNull(result);
+            verify(mockTreeViewDTO, times(1)).getChildren(); // Verifica se a pasta nova foi adicionada à estrutura
+            // Adicione mais verificações conforme necessário
+        }
+    }
+
+    @Test
+    void createNewFolder_FolderNotFound_ThrowsException() {
+        // Setup para falhar em encontrar o diretório base
+        fileService = spy(fileService);
+        doReturn(new SidenavDTO("Main", "/main", new ArrayList<>())).when(fileService).transformFileInObject(anyString(), eq(SidenavDTO.class));
+        doReturn(null).when(fileService).findFolder(anyList(), anyString());
+
+        // Ação e Verificação
+        assertThrows(FolderCreationException.class, () -> fileService.createNewFolder(new FolderDTO("NewFolder", "/basePathNotExists")),
+                "Deve lançar FolderCreationException se o diretório base não for encontrado.");
+    }
 }
