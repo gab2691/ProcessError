@@ -64,4 +64,30 @@ class FileServiceTest {
             assertThrows(SaveFileException.class, () -> fileService.saveFile("test data", "/test/path", "testFile"));
         }
     }
+@Test
+    void transformFileInObject_WithValidFile_SuccessfullyTransforms(@TempDir Path tempDir) throws IOException {
+        // Criar um arquivo temporário e escrever conteúdo nele
+        Path tempFile = tempDir.resolve("tempFile.json");
+        String jsonContent = "{\"name\":\"Test Name\"}";
+        Files.write(tempFile, jsonContent.getBytes());
+
+        // Teste com uma classe de exemplo que corresponda ao JSON
+        ExampleClass result = fileService.transformFileInObject(tempFile.toString(), ExampleClass.class);
+
+        assertNotNull(result);
+        assertEquals("Test Name", result.getName());
+    }
+
+    @Test
+    void transformFileInObject_WithInvalidInput_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> 
+            fileService.transformFileInObject(null, null));
+    }
+
+    @Test
+    void transformFileInObject_FileNotAccessible_ThrowsFileNotAccessibleException() {
+        String nonExistentFilePath = "nonexistentfile.json";
+        assertThrows(FileNotAccessibleException.class, () -> 
+            fileService.transformFileInObject(nonExistentFilePath, ExampleClass.class));
+    }
 }
