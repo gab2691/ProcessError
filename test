@@ -1,19 +1,78 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@BeforeEach
-void setUp() throws Exception {
-    fileService = new FileService(); // Assume que FileService não é abstrato aqui
-    String jsonContent = "{\"key\": \"value\"}";
-    InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-    when(mockResource.exists()).thenReturn(true);
-    when(mockResource.getInputStream()).thenReturn(inputStream);
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-    // Injeta o mockResource no fileService
-    ReflectionTestUtils.setField(fileService, "resource", mockResource);
+@ExtendWith(MockitoExtension.class)
+class FileServiceTest {
 
-    // Defina os valores necessários para as variáveis anotadas com @Value
-    ReflectionTestUtils.setField(fileService, "directoryFile", "C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs");
-    ReflectionTestUtils.setField(fileService, "mapPath", "/path/to/map-links-file");
-    ReflectionTestUtils.setField(fileService, "treeViewFile", "/path/to/treeView-file");
+    @InjectMocks
+    private FileService fileService;
+
+    @Mock
+    private ClassPathResource mockResource;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        fileService = new FileService();
+        String jsonContent = "{\"key\": \"value\"}";
+        InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+
+        when(mockResource.exists()).thenReturn(true);
+        when(mockResource.getInputStream()).thenReturn(inputStream);
+
+        ReflectionTestUtils.setField(fileService, "resource", mockResource);
+        ReflectionTestUtils.setField(fileService, "directoryFile", "C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs");
+        ReflectionTestUtils.setField(fileService, "mapPath", "/path/to/map-links-file");
+        ReflectionTestUtils.setField(fileService, "treeViewFile", "/path/to/treeView-file");
+    }
+
+    @Test
+    void init_FileExists_MapFileIsLoaded() {
+        fileService.init();
+        assertNotNull(fileService.getMapFile());
+        assertFalse(fileService.getMapFile().isEmpty());
+        assertEquals("value", fileService.getMapFile().get("key"));
+    }
+
+    @Test
+    void saveFile_SuccessfullySavesFile() throws Exception {
+        String data = "test data";
+        String path = "/test/path";
+        String fileName = "testFile";
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            fileService.saveFile(data, path, fileName);
+            mockedFiles.verify(() -> Files.write(any(Path.class), eq(data.getBytes(StandardCharsets.UTF_8))), times(1));
+        }
+    }
+
+    @Test
+    void saveFile_ThrowsSaveFileException() {
+        String data = "test data";
+        String path = "/test/path";
+        String fileName = "testFile";
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.write(any(Path.class), any(byte[].class)))
+                       .thenThrow(IOException.class);
+
+            assertThrows(SaveFileException.class, () -> fileService.saveFile(data, path, fileName));
+        }
+    }
 }
