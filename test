@@ -90,4 +90,39 @@ class FileServiceTest {
         assertThrows(FileNotAccessibleException.class, () -> 
             fileService.transformFileInObject(nonExistentFilePath, ExampleClass.class));
     }
+@Test
+    void transformInputStreamInObject_WithValidInputStream_SuccessfullyTransforms() throws Exception {
+        String jsonContent = "{\"name\":\"Test Name\"}";
+        InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+
+        ExampleClass result = fileService.transformInputStreamInObject(inputStream, ExampleClass.class);
+
+        assertNotNull(result);
+        assertEquals("Test Name", result.getName());
+    }
+
+    @Test
+    void transformInputStreamInObject_WithInvalidInput_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () ->
+                fileService.transformInputStreamInObject(null, ExampleClass.class),
+                "Passing null inputStream should throw IllegalArgumentException");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                fileService.transformInputStreamInObject(new ByteArrayInputStream(new byte[0]), null),
+                "Passing null clazz should throw IllegalArgumentException");
+    }
+
+    @Test
+    void transformInputStreamInObject_WhenIOExceptionOccurs_ThrowsIllegalArgumentException() throws Exception {
+        InputStream failingInputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Forced IOException for test");
+            }
+        };
+
+        assertThrows(IllegalArgumentException.class, () ->
+                fileService.transformInputStreamInObject(failingInputStream, ExampleClass.class),
+                "IOException during readValue should result in IllegalArgumentException");
+    }
 }
