@@ -1,0 +1,33 @@
+@JsonPropertyOrder({"title", "url", "urlConfluence", "children", "indexPage", "order"})
+@JsonInclude(Include.NON_NULL)
+public class TreeViewDTO {
+
+    private String title;
+    private String url;
+    private String urlConfluence;
+    private boolean isIndexPage;
+    private List<TreeViewDTO> children;
+    private int order;
+
+    public TreeViewDTO(String title, String url, String urlConfluence, List<TreeViewDTO> children, int order, boolean isIndexPage) {
+        this.title = title;
+        this.url = url;
+        this.urlConfluence = urlConfluence;
+        this.isIndexPage = isIndexPage;
+        this.children = children != null ? children : new ArrayList<>();
+        this.order = order;
+    }
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SidenavDTO {
+
+    private String title;
+    private String url;
+    private List<TreeViewDTO> sidenav;
+
+    public SidenavDTO(String title, String url, List<TreeViewDTO> sidenav) {
+        this.title = title;
+        this.url = url;
+        this.sidenav = sidenav;
+    }
