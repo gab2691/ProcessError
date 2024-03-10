@@ -125,4 +125,31 @@ class FileServiceTest {
                 fileService.transformInputStreamInObject(failingInputStream, ExampleClass.class),
                 "IOException during readValue should result in IllegalArgumentException");
     }
+
+@Test
+    void modifyDirectory_SuccessfullyModifiesDirectory() {
+        // Preparar dados de teste
+        List<TreeViewDTO> initialTreeView = Arrays.asList(
+            new TreeViewDTO("Title1", "url1/child1", null, null, 1, false),
+            new TreeViewDTO("Title2", "url2/child2", null, null, 2, false)
+        );
+        SidenavDTO mockSidenavDTO = new SidenavDTO("Title", "url", initialTreeView);
+
+        // Mockar transformFileInObject para retornar mockSidenavDTO
+        fileService = spy(fileService); // Usar spy para permitir mock parcial
+        doReturn(mockSidenavDTO).when(fileService).transformFileInObject(anyString(), eq(SidenavDTO.class));
+
+        // Executar
+        List<TreeViewDTO> modified = fileService.modifyDirectory();
+
+        // Verificar
+        assertNotNull(modified);
+        assertFalse(modified.isEmpty());
+        
+        // Assumindo que a função dfsGetLastDirectory modifica a URL para remover qualquer segmento após o último '/'
+        // Aqui você precisa ajustar a lógica de asserção conforme o que a sua função dfsGetLastDirectory faz exatamente
+        for (TreeViewDTO dto : modified) {
+            assertFalse(dto.getUrl().contains("/"), "URL modificada não deve conter '/': " + dto.getUrl());
+        }
+    }
 }
