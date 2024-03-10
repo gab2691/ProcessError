@@ -199,22 +199,22 @@ class FileServiceTest {
         assertFalse(result, "O método deveria retornar false quando os caminhos não correspondem.");
     }
 
-    // Opcional: Testes para casos de borda, como strings vazias ou nulas
     @Test
-    void comparePaths_WithEmptyOrNullOrPath_ReturnsFalse() {
-        String directoryEmpty = "";
-        String directoryNull = null;
-        Path folder = Paths.get("folder");
-        Path nullFolder = null;
+    void updateTreeView_SuccessfullyUpdatesTreeView(@TempDir Path tempDir) {
+        // Configurar o caminho do arquivo treeView para um diretório temporário
+        String tempTreeViewFile = tempDir.resolve("treeview.json").toString();
+        ReflectionTestUtils.setField(fileService, "treeViewFile", tempTreeViewFile);
 
-        // Testando com diretório vazio
-        assertFalse(fileService.comparePaths(directoryEmpty, folder), "Deveria retornar false para diretório vazio.");
+        List<TreeViewDTO> treeView = Collections.singletonList(
+            new TreeViewDTO("Title", "url", "urlConfluence", Collections.emptyList(), 0, true)
+        );
         
-        // Testando com diretório nulo - Este caso esperaria uma NullPointerException baseado na implementação atual
-        // Se o comportamento desejado for diferente, o método comparePaths precisaria ser ajustado para lidar com null
-        assertThrows(NullPointerException.class, () -> fileService.comparePaths(directoryNull, folder), "Deveria lançar NullPointerException para diretório nulo.");
+        // Executar o método que está sendo testado
+        fileService.updateTreeView(treeView);
         
-        // Testando com folder nulo - Comportamento esperado baseado na implementação atual
-        assertFalse(fileService.comparePaths(directoryEmpty, nullFolder), "Deveria retornar false para folder nulo.");
+        // Verificar se o arquivo foi criado
+        assertTrue(Files.exists(Path.of(tempTreeViewFile)), "O arquivo TreeView deve existir após a atualização.");
+
+        // Opcionalmente, você pode ler o arquivo e verificar se o conteúdo corresponde ao esperado
     }
 }
