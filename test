@@ -176,4 +176,45 @@ class FileServiceTest {
         assertEquals("parent", modified.get(0).getUrl(), "A URL do pai deve ser modificada para o último segmento");
         assertEquals("child", modified.get(0).getChildren().get(0).getUrl(), "A URL da criança deve ser modificada para o último segmento");
     }
+
+@Test
+    void comparePaths_MatchingPaths_ReturnsTrue() {
+        // Caminho que termina exatamente com o nome do arquivo/folder esperado
+        String directory = "C:\\Users\\example\\Documents\\folder";
+        Path folder = Paths.get("folder");
+
+        boolean result = fileService.comparePaths(directory, folder);
+
+        assertTrue(result, "O método deveria retornar true quando os caminhos correspondem.");
+    }
+
+    @Test
+    void comparePaths_NonMatchingPaths_ReturnsFalse() {
+        // Caminho que não termina com o nome do arquivo/folder esperado
+        String directory = "C:\\Users\\example\\Documents\\folder";
+        Path folder = Paths.get("differentFolder");
+
+        boolean result = fileService.comparePaths(directory, folder);
+
+        assertFalse(result, "O método deveria retornar false quando os caminhos não correspondem.");
+    }
+
+    // Opcional: Testes para casos de borda, como strings vazias ou nulas
+    @Test
+    void comparePaths_WithEmptyOrNullOrPath_ReturnsFalse() {
+        String directoryEmpty = "";
+        String directoryNull = null;
+        Path folder = Paths.get("folder");
+        Path nullFolder = null;
+
+        // Testando com diretório vazio
+        assertFalse(fileService.comparePaths(directoryEmpty, folder), "Deveria retornar false para diretório vazio.");
+        
+        // Testando com diretório nulo - Este caso esperaria uma NullPointerException baseado na implementação atual
+        // Se o comportamento desejado for diferente, o método comparePaths precisaria ser ajustado para lidar com null
+        assertThrows(NullPointerException.class, () -> fileService.comparePaths(directoryNull, folder), "Deveria lançar NullPointerException para diretório nulo.");
+        
+        // Testando com folder nulo - Comportamento esperado baseado na implementação atual
+        assertFalse(fileService.comparePaths(directoryEmpty, nullFolder), "Deveria retornar false para folder nulo.");
+    }
 }
