@@ -1,100 +1,78 @@
-package com.santander.documentaction.service;
-
-import com.santander.documentaction.exception.LocalRepoException;
-import jakarta.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Service
-public class JGitService {
+import java.io.File;
+import java.io.IOException;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+public class JGitServiceTest {
+
+    @InjectMocks
+    private JGitService jGitService;
+
+    @Mock
+    private Git git;
+
+    @Mock
+    private Repository repository;
+
+    @Mock
+    private Logger logger;
+
+    // Substitua estes com os valores apropriados conforme necessário
     @Value("${gitLab.remote-repo}")
     private String remoteRepo;
 
-    @Value("${GIT_REPO_PATH:C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs}")
+    @Value("${GIT_REPO_PATH:C:\\Users\\YourPath\\Documents\\Workspace\\Repo\\docs}")
     private String localRepo;
-    private String user = "t734536";
-    private String pass = "Gbb0921@";
-    private final Logger looger = LoggerFactory.getLogger(JGitService.class);
 
-    public void injectRepo(String repo) {
-        this.localRepo = repo;
+    @BeforeEach
+    void setUp() throws IOException, GitAPIException {
+        // Configuração do mock para Git.open
+        when(Git.open(any(File.class))).thenReturn(git);
+
+        // Configuração do mock para new FileRepositoryBuilder().setGitDir(...).build()
+        when(new FileRepositoryBuilder().setGitDir(any(File.class)).build()).thenReturn(repository);
+        
+        // Mock para evitar qualquer ação real na chamada de cloneRepository
+        Git mockGit = mock(Git.class);
+        when(Git.cloneRepository()).thenReturn(mock(Git.CloneCommand.class));
+        when(Git.cloneRepository().call()).thenReturn(mockGit);
     }
 
-    @PostConstruct
-    public void postConstrucut(){
-        initRepo();
+    @Test
+    public void testInitRepoWithoutException() {
+        assertDoesNotThrow(() -> jGitService.initRepo());
+        verify(logger, atLeastOnce()).info(anyString());
     }
 
-    public void initRepo() {
-        File repo = new File(localRepo);
-        if (!new File(localRepo + "/.git").exists()) {
-            try {
-                UsernamePasswordCredentialsProvider usernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider(
-                    user, pass);
-                looger.info("Cloning repository to: {}", localRepo);
-                Git.cloneRepository()
-                    .setURI(remoteRepo)
-                    .setCredentialsProvider(usernamePasswordCredentialsProvider)
-                    .setDirectory(repo)
-                    .call();
-                looger.info("Repository cloned successfully");
-            } catch (GitAPIException e){
-                looger.error("Could not clone repository. Exception: {}", e.getMessage(), e);
-                throw new LocalRepoException("Repository initialization failed", e);
-            }
-        } else looger.info("Repository already exists: {}", localRepo);
-    }
+    @Test
+    public void testPushDocsWithoutException() throws GitAPIException {
+        // Mock necessário para o commit e push
+        when(git.add()).thenReturn(mock(Git.AddCommand.class));
+        when(git.commit()).thenReturn(mock(Git.CommitCommand.class));
+        when(git.push()).thenReturn(mock(Git.PushCommand.class));
 
-    public void updateLocalRepo() {
-        try {
-            looger.info("Starting Update Local repo: " + localRepo);
-            Repository local = new FileRepositoryBuilder().setGitDir(new File(localRepo + "/.git"))
-                .build();
-
-            UsernamePasswordCredentialsProvider usernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider(
-                user, pass);
-
-            new Git(local).pull()
-                .setRemoteBranchName("master")
-                .setCredentialsProvider(usernamePasswordCredentialsProvider)
-                .call();
-            looger.info("Updating Complete");
-        } catch (GitAPIException | IOException e) {
-            throw new LocalRepoException(
-                "Error tryng update local repo: " + localRepo + " " + e.getMessage(), e);
-        }
-    }
-
-    public void pushDocs() {
-        looger.info("Starting push Changes");
-        try (Git git = Git.open((new File(localRepo)))) {
-            git.add()
-                .addFilepattern(".").call();
-
-            git.commit()
-                .setAll(true)
-                .setMessage("Update repo from doc imported by confluence").call();
-
-            git.push()
-                .setRemote(
-                    remoteRepo)
-                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(user, pass))
-                .setForce(true)
-                .call();
-
-            looger.info("Complete pushing DOCs");
-        } catch (Exception e) {
-            throw new LocalRepoException("Error tring pushing DOCs: " + e.getCause(), e);
-        }
+        assertDoesNotThrow(() -> jGitService.pushDocs());
+        verify(git, times(1)).add();
+        verify(git, times(1)).commit();
+        verify(git, times(1)).push();
+        verify(logger, atLeastOnce()).info("Starting push Changes");
     }
 }
