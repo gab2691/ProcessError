@@ -1,17 +1,17 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,36 +20,39 @@ class FileServiceTest {
     @InjectMocks
     private FileService fileService;
 
-    @Mock
-    private ClassPathResource resource;
+    @Value("${directory.map-links-file}")
+    private String mapPath;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        String jsonContent = "{\"key\": \"value\"}";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+    @Value("${GIT_REPO_PATH:C:\\Users\\T734536\\OneDrive - Santander Office 365\\Documents\\Workspace\\MDrepo\\docs\\docs}")
+    private String directoryFile;
 
-        when(resource.exists()).thenReturn(true);
-        when(resource.getInputStream()).thenReturn(inputStream);
+    @Value("${directory.treeView-file}")
+    private String treeViewFile;
 
-        // Não é mais necessário ajustar manualmente o campo 'resource' da classe FileService
-        // A anotação @InjectMocks e @Mock cuidam disso.
+    @Test
+    void saveFile_SuccessfullySavesFile() throws Exception {
+        String data = "test data";
+        String path = "/test/path";
+        String fileName = "testFile";
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            fileService.saveFile(data, path, fileName);
+
+            mockedFiles.verify(() -> Files.write(any(Path.class), eq(data.getBytes(StandardCharsets.UTF_8))), times(1));
+        }
     }
 
     @Test
-    void init_FileExists_MapFileIsLoaded() {
-        fileService.init();
-        assertNotNull(fileService.getMapFile(), "O mapFile não deve ser nulo após a inicialização");
-        assertFalse(fileService.getMapFile().isEmpty(), "O mapFile não deve estar vazio após carregar um arquivo válido");
-        assertEquals("value", fileService.getMapFile().get("key"), "O mapFile deve conter o valor correto carregado do arquivo JSON");
-    }
-    
-    @Test
-    void init_FileDoesNotExist_ErrorLogged() {
-        when(resource.exists()).thenReturn(false); // Simula que o arquivo não existe.
-        
-        // O teste aqui focará em verificar se o log de erro ocorre, o que pode ser mais desafiador sem capturar logs diretamente.
-        // Uma abordagem simplificada é verificar se o mapFile permanece não inicializado ou vazio.
-        fileService.init();
-        assertTrue(fileService.getMapFile().isEmpty(), "O mapFile deve estar vazio se o arquivo não existir");
+    void saveFile_ThrowsSaveFileException() {
+        String data = "test data";
+        String path = "/test/path";
+        String fileName = "testFile";
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.write(any(Path.class), any(byte[].class)))
+                       .thenThrow(IOException.class);
+
+            assertThrows(SaveFileException.class, () -> fileService.saveFile(data, path, fileName));
+        }
     }
 }
