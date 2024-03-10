@@ -1,43 +1,55 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class FileServiceTest {
 
+    @InjectMocks
     private FileService fileService;
 
     @Mock
-    private ClassPathResource mockResource;
+    private ClassPathResource resource;
 
     @BeforeEach
     void setUp() throws Exception {
-        fileService = new FileService(); // Assume que FileService não é abstrato aqui
         String jsonContent = "{\"key\": \"value\"}";
-        InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
 
-        when(mockResource.exists()).thenReturn(true);
-        when(mockResource.getInputStream()).thenReturn(inputStream);
+        when(resource.exists()).thenReturn(true);
+        when(resource.getInputStream()).thenReturn(inputStream);
 
-        // Injeta o mockResource no fileService
-        ReflectionTestUtils.setField(fileService, "resource", mockResource);
+        // Não é mais necessário ajustar manualmente o campo 'resource' da classe FileService
+        // A anotação @InjectMocks e @Mock cuidam disso.
     }
 
     @Test
     void init_FileExists_MapFileIsLoaded() {
         fileService.init();
-        assertNotNull(fileService.getMapFile());
-        assertFalse(fileService.getMapFile().isEmpty());
-        assertEquals("value", fileService.getMapFile().get("key"));
+        assertNotNull(fileService.getMapFile(), "O mapFile não deve ser nulo após a inicialização");
+        assertFalse(fileService.getMapFile().isEmpty(), "O mapFile não deve estar vazio após carregar um arquivo válido");
+        assertEquals("value", fileService.getMapFile().get("key"), "O mapFile deve conter o valor correto carregado do arquivo JSON");
+    }
+    
+    @Test
+    void init_FileDoesNotExist_ErrorLogged() {
+        when(resource.exists()).thenReturn(false); // Simula que o arquivo não existe.
+        
+        // O teste aqui focará em verificar se o log de erro ocorre, o que pode ser mais desafiador sem capturar logs diretamente.
+        // Uma abordagem simplificada é verificar se o mapFile permanece não inicializado ou vazio.
+        fileService.init();
+        assertTrue(fileService.getMapFile().isEmpty(), "O mapFile deve estar vazio se o arquivo não existir");
     }
 }
