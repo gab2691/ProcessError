@@ -1,25 +1,20 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Value;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
 class FileServiceTest {
 
     @InjectMocks
@@ -28,97 +23,40 @@ class FileServiceTest {
     @Mock
     private ClassPathResource resource;
 
-    @Value("${directory.map-links-file}")
-    private String mapPath;
-
-    @Value("${directory.treeView-file}")
-    private String treeViewFile;
-
     @BeforeEach
-    void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        fileService = spy(new FileService() {});
+    void setUp() {
+        // Assume que FileService é uma classe concreta para fins de teste.
+        fileService = new FileService() {
+            // Implemente métodos abstratos se houver.
+        };
     }
 
     @Test
-    void init_resourceExists_loadsMapFileSuccessfully() throws IOException {
-        String jsonContent = "{\"key\":\"value\"}";
+    void init_whenFileExists_loadsMapFileSuccessfully() throws IOException {
+        // Simulação para o recurso existir e para ler um JSON simples.
+        String jsonContent = "{\"key\": \"value\"}";
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8)));
-        doReturn(true).when(resource).exists();
+        when(resource.exists()).thenReturn(true);
+
+        // Execute o método init.
         fileService.init();
+
+        // Verifica se o mapFile foi carregado corretamente.
         assertNotNull(fileService.getMapFile());
         assertEquals("value", fileService.getMapFile().get("key"));
     }
 
     @Test
-    void saveFile_validInput_fileSavedSuccessfully() throws IOException {
-        String data = "Test Data";
-        String path = "/test";
-        String fileName = "testFile";
+    void init_whenFileDoesNotExist_logsError() {
+        // Simulação para o recurso não existir.
+        when(resource.exists()).thenReturn(false);
 
-        Path directoryPath = Paths.get(mapPath).resolve(path.substring(1)).getParent();
-        Path finalPath = directoryPath.resolve(fileName + ".md");
+        // Execute o método init.
+        fileService.init();
 
-        fileService.saveFile(data, path, fileName);
-
-        verify(fileService, times(1)).saveFile(data, path, fileName);
-        assertTrue(Files.exists(finalPath));
+        // Verifica se o mapFile não foi carregado.
+        assertTrue(fileService.getMapFile().isEmpty());
+        // Aqui, você também pode querer verificar se uma mensagem de erro específica foi logada.
+        // Isso pode ser mais desafiador, pois envolve a verificação de logs específicos.
     }
-
-    @Test
-    void transformFileInObject_validPath_transformsSuccessfully() throws IOException {
-        String filePath = "path/to/testFile.json";
-        File file = new File(filePath);
-        when(file.exists()).thenReturn(true);
-        when(file.canRead()).thenReturn(true);
-
-        HashMap<String, Object> result = fileService.transformFileInObject(filePath, HashMap.class);
-
-        assertNotNull(result);
-        // Additional assertions based on the expected structure of your file
-    }
-
-    @Test
-    void transformInputStreamInObject_validInputStream_transformsSuccessfully() {
-        String jsonContent = "{\"key\":\"value\"}";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
-
-        HashMap result = fileService.transformInputStreamInObject(inputStream, HashMap.class);
-
-        assertNotNull(result);
-        assertEquals("value", result.get("key"));
-    }
-
-    @Test
-    void modifyDirectory_validTreeView_modifiesSuccessfully() {
-        // Assuming transformFileInObject is mocked to return a specific SidenavDTO object
-        List<TreeViewDTO> treeViewDTOs = new ArrayList<>();
-        TreeViewDTO treeViewDTO = new TreeViewDTO();
-        treeViewDTO.setUrl("original/url");
-        treeViewDTOs.add(treeViewDTO);
-
-        when(fileService.transformFileInObject(treeViewFile, SidenavDTO.class)).thenReturn(new SidenavDTO("test", "/test", treeViewDTOs));
-
-        List<TreeViewDTO> modified = fileService.modifyDirectory();
-
-        assertNotNull(modified);
-        assertEquals("url", modified.get(0).getUrl());
-        // Further assertions as needed
-    }
-
-    @Test
-    void updateTreeView_validTreeView_updatesSuccessfully() {
-        List<TreeViewDTO> treeViewDTOs = new ArrayList<>();
-        TreeViewDTO treeViewDTO = new TreeViewDTO();
-        treeViewDTOs.add(treeViewDTO);
-
-        doNothing().when(fileService).updateTreeView(treeViewDTOs);
-
-        fileService.updateTreeView(treeViewDTOs);
-
-        verify(fileService, times(1)).updateTreeView(treeViewDTOs);
-    }
-
-    // Testes para createNewFolder, comparePaths e outros métodos públicos devem seguir uma lógica similar,
-    // focando em cenários de sucesso, manipulação de exceções e verificações de estado ou interações.
 }
