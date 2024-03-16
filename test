@@ -1,1 +1,53 @@
+package com.santander.bot.donna.app.dto;
+
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class RequestRAGDTO {
+
+    private List<MessageDTO> message;
+    private boolean stream;
+    private ContextDTO context;
+    private String team;
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MessageDTO {
+
+        private String content;
+        private String role;
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ContextDTO {
+
+        private OverridesDTO overrides;
+
+
+        @Setter
+        @Getter
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class OverridesDTO {
+
+            private int top;
+            private String cloud_ranker;
+            private boolean semantic_ranker;
+        }
+    }
+
+}
+
 
