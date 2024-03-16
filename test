@@ -1,92 +1,29 @@
-package com.santander.bot.donna.app.dto;
-
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class RequestRAGDTO {
-
-    private List<MessageDTO> message;
-    private boolean stream;
-    private ContextDTO context;
-    private String team;
-
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class MessageDTO {
-
-        private String content;
-        private String role;
-    }
-
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ContextDTO {
-
-        private OverridesDTO overrides;
-
-
-        @Setter
-        @Getter
-        @AllArgsConstructor
-        @NoArgsConstructor
-        public static class OverridesDTO {
-
-            private int top;
-            private String cloud_ranker;
-            private boolean semantic_ranker;
-        }
-    }
-
-}
-
-
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
-import com.santander.bot.donna.app.dto.RequestRAGDTO;
-import com.santander.bot.donna.app.dto.ChatRequestDTO; // Supondo a existência desta classe
+import java.util.Collections;
 
 @Mapper
 public interface ChatRequestToRAGMapper {
 
     ChatRequestToRAGMapper INSTANCE = Mappers.getMapper(ChatRequestToRAGMapper.class);
 
-    @Mappings({
-        @Mapping(target = "message", source = "chatRequestDTO"),
-        @Mapping(target = "stream", constant = "true"),
-        @Mapping(source = "team", target = "team"),
-        @Mapping(target = "context.overrides.top", constant = "6"),
-        @Mapping(target = "context.overrides.cloud_ranker", constant = "azure"),
-        @Mapping(target = "context.overrides.semantic_ranker", constant = "true")
-    })
+    // Método para criar o RequestRAGDTO com valores padrão
     RequestRAGDTO toRequestRAGDTO(ChatRequestDTO chatRequestDTO);
 
-    default RequestRAGDTO.MessageDTO chatRequestToMessageDTO(ChatRequestDTO chatRequestDTO) {
-        if ( chatRequestDTO == null ) {
-            return null;
-        }
+    // Usando AfterMapping para preencher os campos que requerem valores fixos ou padrão
+    @AfterMapping
+    default void fillInDefaults(@MappingTarget RequestRAGDTO requestRAGDTO, ChatRequestDTO chatRequestDTO) {
+        RequestRAGDTO.MessageDTO messageDTO = new RequestRAGDTO.MessageDTO(chatRequestDTO.getContent(), "user");
+        requestRAGDTO.setMessage(Collections.singletonList(messageDTO));
+        
+        RequestRAGDTO.ContextDTO contextDTO = new RequestRAGDTO.ContextDTO();
+        RequestRAGDTO.ContextDTO.OverridesDTO overridesDTO = new RequestRAGDTO.ContextDTO.OverridesDTO(6, "azure", true);
+        contextDTO.setOverrides(overridesDTO);
+        requestRAGDTO.setContext(contextDTO);
 
-        RequestRAGDTO.MessageDTO messageDTO = new RequestRAGDTO.MessageDTO();
-
-        messageDTO.setContent(chatRequestDTO.getContent());
-        // Assumindo que o "role" é fixo ou determinado por outra lógica aqui
-        messageDTO.setRole("user");
-
-        return messageDTO;
+        requestRAGDTO.setStream(true);
+        // O campo "team" é mapeado diretamente do ChatRequestDTO e não necessita de ajustes adicionais aqui
     }
 }
-
-
-
