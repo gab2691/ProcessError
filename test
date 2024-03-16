@@ -9,21 +9,29 @@ public interface ChatRequestToRAGMapper {
 
     ChatRequestToRAGMapper INSTANCE = Mappers.getMapper(ChatRequestToRAGMapper.class);
 
-    // Método para criar o RequestRAGDTO com valores padrão
-    RequestRAGDTO toRequestRAGDTO(ChatRequestDTO chatRequestDTO);
-
-    // Usando AfterMapping para preencher os campos que requerem valores fixos ou padrão
-    @AfterMapping
-    default void fillInDefaults(@MappingTarget RequestRAGDTO requestRAGDTO, ChatRequestDTO chatRequestDTO) {
-        RequestRAGDTO.MessageDTO messageDTO = new RequestRAGDTO.MessageDTO(chatRequestDTO.getContent(), "user");
+    // Método para transformar o ChatRequestDTO em RequestRAGDTO
+    default RequestRAGDTO toRequestRAGDTO(ChatRequestDTO chatRequestDTO) {
+        RequestRAGDTO requestRAGDTO = new RequestRAGDTO();
+        
+        // Preenchendo o campo de mensagem
+        RequestRAGDTO.MessageDTO messageDTO = new RequestRAGDTO.MessageDTO();
+        messageDTO.setContent(chatRequestDTO.getMessage());
+        messageDTO.setRole("user"); // Valor fixo, conforme necessário
         requestRAGDTO.setMessage(Collections.singletonList(messageDTO));
         
+        // Configurando stream para true e o team com o valor recebido
+        requestRAGDTO.setStream(true);
+        requestRAGDTO.setTeam(chatRequestDTO.getTeam());
+
+        // Preenchendo o contexto e os overrides com valores fixos
         RequestRAGDTO.ContextDTO contextDTO = new RequestRAGDTO.ContextDTO();
-        RequestRAGDTO.ContextDTO.OverridesDTO overridesDTO = new RequestRAGDTO.ContextDTO.OverridesDTO(6, "azure", true);
+        RequestRAGDTO.ContextDTO.OverridesDTO overridesDTO = new RequestRAGDTO.ContextDTO.OverridesDTO();
+        overridesDTO.setTop(6);
+        overridesDTO.setCloud_ranker("azure");
+        overridesDTO.setSemantic_ranker(true);
         contextDTO.setOverrides(overridesDTO);
         requestRAGDTO.setContext(contextDTO);
-
-        requestRAGDTO.setStream(true);
-        // O campo "team" é mapeado diretamente do ChatRequestDTO e não necessita de ajustes adicionais aqui
+        
+        return requestRAGDTO;
     }
 }
